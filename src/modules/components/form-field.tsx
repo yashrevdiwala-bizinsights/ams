@@ -1,23 +1,23 @@
-import { Button, DatePicker, Input, Select, Slider } from "antd";
-import { Eye, EyeOff } from "lucide-react";
-import { Controller } from "react-hook-form";
+import { Button, DatePicker, Input, Select, Slider } from "antd"
+import { Eye, EyeOff } from "lucide-react"
+import { Controller } from "react-hook-form"
 
 interface FormLabelProps {
-  children: React.ReactNode;
-  [key: string]: unknown;
+  children: React.ReactNode
+  [key: string]: unknown
 }
 
 interface FormInputProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: any;
-  name: string;
-  defaultValue?: string | boolean;
-  options?: { label: string; value: string }[];
-  [key: string]: unknown;
+  control: any
+  name: string
+  defaultValue?: string | boolean
+  options?: { label: string; value: string }[]
+  [key: string]: unknown
 }
 
 interface FormButtonProps {
-  htmlType?: "submit" | "reset" | "button";
+  htmlType?: "submit" | "reset" | "button"
   color?:
     | "default"
     | "primary"
@@ -34,15 +34,16 @@ interface FormButtonProps {
     | "volcano"
     | "geekblue"
     | "lime"
-    | "gold";
-  variant?: "solid" | "dashed" | "link" | "text" | "outlined" | "filled";
-  children: React.ReactNode;
-  onClick?: () => void;
+    | "gold"
+  variant?: "solid" | "dashed" | "link" | "text" | "outlined" | "filled"
+  children?: React.ReactNode
+  onClick?: () => void
+  [key: string]: unknown
 }
 
 export const Label = ({ children, ...props }: FormLabelProps) => (
   <label {...props}>{children}</label>
-);
+)
 
 export const InputField = ({
   control,
@@ -57,7 +58,7 @@ export const InputField = ({
     defaultValue={defaultValue || ""}
     render={({ field }) => <Input size="large" {...field} {...props} />}
   />
-);
+)
 
 export const Password = ({
   control,
@@ -77,7 +78,7 @@ export const Password = ({
       />
     )}
   />
-);
+)
 
 export const TextArea = ({
   control,
@@ -90,9 +91,17 @@ export const TextArea = ({
     defaultValue={
       typeof defaultValue === "boolean" ? defaultValue.toString() : defaultValue
     }
-    render={({ field }) => <Input.TextArea {...field} {...props} autoSize />}
+    render={({ field }) => (
+      <Input.TextArea
+        autoSize={{
+          minRows: 3,
+        }}
+        {...field}
+        {...props}
+      />
+    )}
   />
-);
+)
 
 export const InputDate = ({
   control,
@@ -114,7 +123,7 @@ export const InputDate = ({
       />
     )}
   />
-);
+)
 
 export const InputSlider = ({
   control,
@@ -126,7 +135,7 @@ export const InputSlider = ({
     {...props}
     defaultValue={defaultValue || ""}
     render={({ field }) => {
-      const { value, ...rest } = field;
+      const { value, ...rest } = field
       return (
         <Slider
           range
@@ -134,10 +143,10 @@ export const InputSlider = ({
           value={Array.isArray(value) ? value : [0, 0]}
           {...props}
         />
-      );
+      )
     }}
   />
-);
+)
 
 export const InputSelect = ({
   control,
@@ -161,7 +170,7 @@ export const InputSelect = ({
       />
     )}
   />
-);
+)
 
 export const FormButton = ({
   htmlType,
@@ -169,15 +178,17 @@ export const FormButton = ({
   variant,
   children,
   onClick,
+  ...props
 }: FormButtonProps) => {
   return (
     <Button
       htmlType={htmlType}
       onClick={onClick}
-      color={color || "default"}
+      color={color || "primary"}
       variant={variant || "solid"}
+      {...props}
     >
       {children}
     </Button>
-  );
-};
+  )
+}
