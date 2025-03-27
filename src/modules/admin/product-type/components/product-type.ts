@@ -1,4 +1,4 @@
-export const productsTypeData = [
+export const productsTypeData: ProductType[] = [
   {
     id: 1,
     productType: "Household",
@@ -7,7 +7,7 @@ export const productsTypeData = [
   {
     id: 2,
     productType: "Beauty",
-    status: true,
+    status: false,
   },
   {
     id: 3,

@@ -6,9 +6,11 @@ import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
 import useDocumentTitle from "@/lib/useDocumentTitle"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
+import { ExcelDownload } from "@/modules/components/excel-download"
 import { FormButton } from "@/modules/components/form-field"
-import UserForm, { User } from "./components/form"
+import UserForm from "./components/form"
 import { usersData } from "./components/users"
+import moment from "moment"
 
 const UserPage: React.FC = () => {
   useDocumentTitle("Users - AMS")
@@ -67,12 +69,17 @@ const UserPage: React.FC = () => {
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Designation", dataIndex: "designation", key: "designation" },
     { title: "Access Level", dataIndex: "accessLevel", key: "accessLevel" },
-    { title: "Last Login", dataIndex: "lastLogin", key: "lastLogin" },
+    {
+      title: "Last Login",
+      dataIndex: "lastLogin",
+      key: "lastLogin",
+      render: (lastLogin: string) => moment(lastLogin).format("lll"),
+    },
     {
       title: "Status",
-      dataIndex: "isActive",
-      key: "isActive",
-      render: (isActive: boolean) => <Switch defaultChecked={isActive} />,
+      dataIndex: "status",
+      key: "status",
+      render: (status: boolean) => <Switch defaultChecked={status} />,
     },
     {
       title: "Actions",
@@ -108,7 +115,10 @@ const UserPage: React.FC = () => {
         <Breadcrumb menu="Master" active="Users" />
       </div>
 
-      <div style={{ marginBottom: 16 }}>
+      <div
+        className="d-flex justify-content-between align-items-center"
+        style={{ marginBottom: 16 }}
+      >
         <FormButton
           color="primary"
           icon={<Plus />}
@@ -116,6 +126,10 @@ const UserPage: React.FC = () => {
         >
           Add User
         </FormButton>
+
+        {users && users.length > 0 && (
+          <ExcelDownload data={users} sheetName="users" />
+        )}
       </div>
 
       <Table

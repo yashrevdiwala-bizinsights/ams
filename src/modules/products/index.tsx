@@ -6,6 +6,7 @@ import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
 import useDocumentTitle from "@/lib/useDocumentTitle"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
+import { ExcelDownload } from "@/modules/components/excel-download"
 import { FormButton } from "@/modules/components/form-field"
 import { ProductForm } from "./components/product-form"
 import { productsData } from "./components/products"
@@ -107,7 +108,10 @@ const Product = () => {
         <Breadcrumb menu="Master" active="Products" />
       </div>
 
-      <div style={{ marginBottom: 16 }}>
+      <div
+        className="d-flex justify-content-between align-items-center"
+        style={{ marginBottom: 16 }}
+      >
         <FormButton
           color="primary"
           icon={<Plus />}
@@ -115,6 +119,10 @@ const Product = () => {
         >
           Add Product
         </FormButton>
+
+        {products && products.length > 0 && (
+          <ExcelDownload data={products} sheetName="products" />
+        )}
       </div>
 
       <Table

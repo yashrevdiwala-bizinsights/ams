@@ -4,19 +4,28 @@ import { Switch, Table } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
+import useDocumentTitle from "@/lib/useDocumentTitle"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
+import { ExcelDownload } from "@/modules/components/excel-download"
 import { FormButton } from "@/modules/components/form-field"
 import { productsData } from "@/modules/products/components/products"
 import { vendorData } from "@/modules/vendors/components/vendor-data"
 import { assetData } from "./components/asset-data"
 
 const Assets = () => {
+  useDocumentTitle("Assets - AMS")
+
   const navigate = useNavigate()
   const [assets, setAssets] = useState<AssetType[]>()
 
   useEffect(() => {
     setAssets(assetData)
   }, [])
+
+  const handleRemove = (id: number) => {
+    const newAssets = assets?.filter((asset) => asset.id !== id)
+    setAssets(newAssets)
+  }
 
   const columns: ColumnsType<AssetType> = [
     { title: "ID", dataIndex: "id", key: "id", fixed: "left" },
@@ -86,7 +95,7 @@ const Assets = () => {
             variant="text"
             icon={<Trash />}
             color="danger"
-            //   onClick={() => handleRemove(vendorData.id)}
+            onClick={() => handleRemove(vendorData.id)}
           />
         </div>
       ),
@@ -100,7 +109,10 @@ const Assets = () => {
         <Breadcrumb menu="Master" active="Assets" />
       </div>
 
-      <div style={{ marginBottom: 16 }}>
+      <div
+        className="d-flex justify-content-between align-items-center"
+        style={{ marginBottom: 16 }}
+      >
         <FormButton
           color="primary"
           icon={<Plus />}
@@ -108,6 +120,10 @@ const Assets = () => {
         >
           Add Asset
         </FormButton>
+
+        {assets && assets.length > 0 && (
+          <ExcelDownload data={assets} sheetName="assets" />
+        )}
       </div>
 
       <Table

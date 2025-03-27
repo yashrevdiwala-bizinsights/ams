@@ -13,7 +13,7 @@ export const assetData: AssetType[] = [
     purchaseDate: moment(),
     warrantyExpires: moment(),
     description: "Dell Laptop",
-    status: true,
+    status: false,
   },
   {
     id: 2,

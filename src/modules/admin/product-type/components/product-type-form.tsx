@@ -37,6 +37,7 @@ export const ProductTypeForm = ({
 
   return (
     <Modal
+      centered
       open={open}
       okText={editProductType ? "Update" : "Add"}
       onCancel={onClose}
@@ -50,7 +51,11 @@ export const ProductTypeForm = ({
       <form>
         <div style={{ marginBottom: 16 }}>
           <Label>Product Type</Label>
-          <InputField control={control} name="productType" />
+          <InputField
+            control={control}
+            name="productType"
+            placeholder="Product Type"
+          />
         </div>
       </form>
     </Modal>

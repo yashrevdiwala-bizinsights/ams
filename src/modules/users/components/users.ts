@@ -1,4 +1,6 @@
-export const usersData = [
+import moment from "moment"
+
+export const usersData: User[] = [
   {
     id: 1,
     profilePic: "https://sipl.ind.in/wp-content/uploads/2022/07/dummy-user.png",
@@ -6,8 +8,8 @@ export const usersData = [
     email: "johndoe@example.com",
     designation: "Project Manager",
     accessLevel: "Full",
-    lastLogin: "2024-03-01",
-    isActive: true,
+    lastLogin: moment("2024-02-28"),
+    status: true,
   },
   {
     id: 2,
@@ -17,7 +19,7 @@ export const usersData = [
     email: "janesmith@example.com",
     designation: "User",
     accessLevel: "Limited",
-    lastLogin: "2024-02-28",
-    isActive: false,
+    lastLogin: moment("2022-12-08"),
+    status: false,
   },
 ]

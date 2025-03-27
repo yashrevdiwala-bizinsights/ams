@@ -1,11 +1,14 @@
 import { useParams } from "react-router"
 import { ShoppingCart } from "lucide-react"
 
+import useDocumentTitle from "@/lib/useDocumentTitle"
 import { BackButton } from "@/modules/components/back-button"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { productsData } from "./components/products"
 
 const ProductView = () => {
+  useDocumentTitle("Product View - AMS")
+
   const { id } = useParams<{ id: string }>()
 
   const product = productsData.find((product) => product.id === Number(id))

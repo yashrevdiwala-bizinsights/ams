@@ -6,6 +6,7 @@ import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
 import useDocumentTitle from "@/lib/useDocumentTitle"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
+import { ExcelDownload } from "@/modules//components/excel-download"
 import { FormButton } from "@/modules/components/form-field"
 import { vendorData } from "./components/vendor-data"
 import { VendorForm } from "./components/vendor-form"
@@ -29,6 +30,8 @@ const Vendors = () => {
 
   const handleUpdate = (vendor: VendorsType) => {
     if (selectedVendor) {
+      console.log("Updating vendor", vendor)
+
       setVendors((prevVendors) => {
         if (!prevVendors) return []
 
@@ -110,7 +113,10 @@ const Vendors = () => {
         <Breadcrumb menu="Master" active="Vendors" />
       </div>
 
-      <div style={{ marginBottom: 16 }}>
+      <div
+        className="d-flex justify-content-between align-items-center"
+        style={{ marginBottom: 16 }}
+      >
         <FormButton
           color="primary"
           icon={<Plus />}
@@ -118,6 +124,10 @@ const Vendors = () => {
         >
           Add Vendor
         </FormButton>
+
+        {vendors && vendors.length > 0 && (
+          <ExcelDownload data={vendors} sheetName="vendors" />
+        )}
       </div>
 
       <Table

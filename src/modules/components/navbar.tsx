@@ -13,7 +13,7 @@ const Navbar = () => {
           <div key={i}>
             {route.icon &&
               route.label &&
-              (!route.children ? (
+              (!route.nested ? (
                 <NavItem
                   activeTab={activeTab}
                   icon={route.icon}
@@ -21,11 +21,15 @@ const Navbar = () => {
                   path={route.path || "/admin"}
                 />
               ) : (
-                <NestedNavItem
-                  parentLabel={route.label}
-                  icon={route.icon}
-                  childRoutes={route.children}
-                />
+                route.children && (
+                  <NestedNavItem
+                    parentPath={route.path || "/admin"}
+                    parentLabel={route.label}
+                    icon={route.icon}
+                    activeTab={activeTab}
+                    childRoutes={route.children}
+                  />
+                )
               ))}
           </div>
         ))}

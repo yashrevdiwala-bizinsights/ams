@@ -1,9 +1,21 @@
 interface AdminChildRoute extends NonIndexRouteObject {
-  path?: string
+  path: string
+  label?: string
   element: React.ReactElement
   icon?: LucideIcon
-  label?: string
+  nested?: boolean
   children?: AdminChildRoute[]
+}
+
+interface User {
+  id: number
+  profilePic?: string
+  fullName?: string
+  email?: string
+  designation?: string
+  accessLevel?: string
+  lastLogin?: moment.Moment
+  status?: boolean
 }
 
 interface VendorsType {
@@ -53,5 +65,23 @@ interface AssetType {
 interface ProductType {
   id: number
   productType: string
+  status: boolean
+}
+
+interface ProductCategory {
+  id: number
+  productCategory: string
+  status: boolean
+}
+
+interface LocationType {
+  id: number
+  gateNumber: string
+  address1: string
+  address2: string
+  country: string
+  state: string
+  city: string
+  zipCode: string
   status: boolean
 }

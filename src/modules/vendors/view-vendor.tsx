@@ -1,11 +1,14 @@
 import { useParams } from "react-router"
 import { Contact } from "lucide-react"
 
+import useDocumentTitle from "@/lib/useDocumentTitle"
 import { BackButton } from "@/modules/components/back-button"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { vendorData } from "./components/vendor-data"
 
 const VendorView = () => {
+  useDocumentTitle("Vendor View - AMS")
+
   const { id } = useParams<{ id: string }>()
 
   const vendor = vendorData.find((vendor) => vendor.id === Number(id))
@@ -56,7 +59,7 @@ const VendorView = () => {
                 <span>
                   {(vendor?.add1 &&
                     vendor.add2 &&
-                    vendor?.add1 + vendor?.add2) ||
+                    vendor?.add1 + ", " + vendor?.add2) ||
                     "--"}
                 </span>
                 <span>{vendor?.gstNumber || "--"}</span>

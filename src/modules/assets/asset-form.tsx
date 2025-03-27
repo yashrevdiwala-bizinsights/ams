@@ -1,23 +1,29 @@
 import { useEffect } from "react"
-import { useParams } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import { useForm } from "react-hook-form"
 import moment from "moment"
 
+import useDocumentTitle from "@/lib/useDocumentTitle"
 import { BackButton } from "@/modules/components/back-button"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import {
+  FormButton,
   InputDate,
   InputField,
   InputSelect,
   Label,
   TextArea,
 } from "@/modules/components/form-field"
+import { locationData } from "@/modules/admin/locations/components/location"
 import { productsData } from "@/modules/products/components/products"
 import { vendorData } from "@/modules/vendors/components/vendor-data"
 import { assetData } from "./components/asset-data"
 
 const AssetForm = () => {
+  const navigate = useNavigate()
   const { id } = useParams()
+
+  useDocumentTitle(`${id ? "Update" : "Add"} Asset - AMS`)
 
   const editAsset = id ? assetData.find((a) => a.id === Number(id)) : null
 
@@ -55,6 +61,7 @@ const AssetForm = () => {
 
   const onSubmit = (data: AssetType) => {
     console.log(data)
+    navigate("/admin/assets")
   }
 
   return (
@@ -108,10 +115,19 @@ const AssetForm = () => {
                 <Label>Office Location</Label>
                 <InputSelect
                   placeholder="Select Office Location"
-                  options={[
-                    { label: "Banglore", value: "1" },
-                    { label: "Surat", value: "2" },
-                  ]}
+                  options={locationData.map((location) => ({
+                    label:
+                      location.gateNumber +
+                      ", " +
+                      location.address1 +
+                      ", " +
+                      location.address2 +
+                      ", " +
+                      location.city +
+                      ", " +
+                      location.state,
+                    value: location.id.toString(),
+                  }))}
                   name="officeLocation"
                   control={control}
                 />
@@ -163,6 +179,15 @@ const AssetForm = () => {
             <div style={{ marginBottom: 16 }}>
               <Label>Description</Label>
               <TextArea name="description" control={control} />
+            </div>
+
+            <div
+              className="d-flex justify-content-end"
+              style={{ marginBottom: 16 }}
+            >
+              <FormButton htmlType="submit">
+                {id ? "Update Asset" : "Create Asset"}
+              </FormButton>
             </div>
           </form>
         </div>

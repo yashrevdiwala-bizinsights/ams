@@ -10,7 +10,9 @@ interface NavItemProps {
 
 interface NestedNavItemProps {
   icon: LucideIcon
+  parentPath: string
   parentLabel: string
+  activeTab: string
   childRoutes: AdminChildRoute[]
 }
 
@@ -37,13 +39,17 @@ export const NavItem = ({
 
 export const NestedNavItem = ({
   icon: Icon,
+  parentPath,
   parentLabel,
+  activeTab,
   childRoutes,
 }: NestedNavItemProps) => {
   return (
     <li className="nav-item" style={{ cursor: "pointer" }}>
       <p
-        className="nav-link collapsed"
+        className={
+          activeTab.includes(parentPath) ? "nav-link" : "nav-link collapsed"
+        }
         data-bs-target={`#${parentLabel.replace(" ", "-").toLowerCase()}-nav`}
         data-bs-toggle="collapse"
       >
@@ -57,12 +63,20 @@ export const NestedNavItem = ({
 
       <ul
         id={`${parentLabel.replace(" ", "-").toLowerCase()}-nav`}
-        className="nav-content collapse"
+        className={`nav-content collapse ${
+          activeTab.includes(parentPath) ? "show" : ""
+        }`}
         data-bs-parent="#sidebar-nav"
       >
-        {childRoutes.map((route) => (
-          <li>
-            <Link to={route.path || "/admin"}>
+        {childRoutes.map((route, i) => (
+          <li className="nav-item" key={i}>
+            <Link
+              to={route.path || "/admin"}
+              className={
+                activeTab === route.path ? "nav-link" : "nav-link collapsed"
+              }
+              style={activeTab === route.path ? { color: "#4e46eb" } : {}}
+            >
               <route.icon
                 style={{
                   width: "1.25rem",

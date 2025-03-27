@@ -1,24 +1,23 @@
 import { useParams } from "react-router"
-import { User } from "lucide-react"
-import moment from "moment"
+import { Contact } from "lucide-react"
 
 import useDocumentTitle from "@/lib/useDocumentTitle"
 import { BackButton } from "@/modules/components/back-button"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
-import { usersData } from "./components/users"
+import { locationData } from "./components/location"
 
-const UserView = () => {
-  useDocumentTitle("User View - AMS")
+const LocationView = () => {
+  useDocumentTitle("Location View - AMS")
 
   const { id } = useParams<{ id: string }>()
 
-  const user = usersData.find((user) => user.id === Number(id))
+  const location = locationData.find((location) => location.id === Number(id))
 
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1>Users</h1>
-        <Breadcrumb menu="Master" title="Users" active="View" />
+        <h1>Locations</h1>
+        <Breadcrumb menu="Master" title="Locations" active="View" />
       </div>
 
       <BackButton />
@@ -28,7 +27,7 @@ const UserView = () => {
           <div className="card-body">
             <h5 className="card-title d-flex align-items-center">
               <span className="card-icon">
-                <User
+                <Contact
                   style={{
                     width: "1.25rem",
                     height: "1.25rem",
@@ -36,34 +35,31 @@ const UserView = () => {
                   }}
                 />
               </span>
-              User Details
+              Location Details
             </h5>
 
             <div className="d-flex align-items-center fw-bold fs-6 text-muted gap-5 p-4">
-              <div className="ms-5 me-5">
-                <img
-                  src={user?.profilePic}
-                  alt={user?.fullName}
-                  style={{ width: "100px", height: "100px" }}
-                />
-              </div>
-
               <div className="d-flex flex-column align-items-start justify-content-center gap-3 ms-5">
-                <span className="">Name:</span>
-                <span className="">Email:</span>
-                <span className="">Designation:</span>
-                <span className="">Access Level:</span>
-                <span className="">Last Login:</span>
+                <span>Gate No. :</span>
+                <span>Address:</span>
+                <span>City:</span>
+                <span>State:</span>
+                <span>Country:</span>
+                <span>Zip Code:</span>
               </div>
 
               <div className="d-flex flex-column align-items-start justify-content-center gap-3">
-                <span className="">{user?.fullName}</span>
-                <span className="">{user?.email}</span>
-                <span className="">{user?.designation}</span>
-                <span className="">{user?.accessLevel}</span>
-                <span className="">
-                  {moment(user?.lastLogin).format("lll")}
+                <span>{location?.gateNumber || "--"}</span>
+                <span>
+                  {(location?.address1 &&
+                    location.address2 &&
+                    location?.address1 + ", " + location?.address2) ||
+                    "--"}
                 </span>
+                <span>{location?.city || "--"}</span>
+                <span>{location?.state || "--"}</span>
+                <span>{location?.country || "--"}</span>
+                <span>{location?.zipCode || "--"}</span>
               </div>
             </div>
           </div>
@@ -73,4 +69,4 @@ const UserView = () => {
   )
 }
 
-export default UserView
+export default LocationView

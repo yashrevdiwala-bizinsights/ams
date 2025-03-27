@@ -1,6 +1,7 @@
-import { Button, DatePicker, Input, Select, Slider } from "antd"
-import { Eye, EyeOff } from "lucide-react"
 import { Controller } from "react-hook-form"
+import { Button, DatePicker, Input, Select, Slider } from "antd"
+import { BaseButtonProps } from "antd/es/button/button"
+import { Eye, EyeOff } from "lucide-react"
 
 interface FormLabelProps {
   children: React.ReactNode
@@ -16,7 +17,7 @@ interface FormInputProps {
   [key: string]: unknown
 }
 
-interface FormButtonProps {
+interface FormButtonProps extends BaseButtonProps {
   htmlType?: "submit" | "reset" | "button"
   color?:
     | "default"

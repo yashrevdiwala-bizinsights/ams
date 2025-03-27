@@ -56,8 +56,13 @@ export const VendorForm = ({
   }, [editVendor, setValue, reset])
 
   const onSubmit = (data: VendorsType) => {
-    onSave(data)
-    onClose()
+    if (editVendor) {
+      onSave({ ...editVendor, ...data })
+      onClose()
+    } else {
+      onSave(data)
+      onClose()
+    }
   }
 
   return (

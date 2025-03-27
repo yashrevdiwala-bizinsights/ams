@@ -1,7 +1,14 @@
 import { useEffect } from "react"
 import { Modal } from "antd"
 import { useForm } from "react-hook-form"
-import { Label, InputField, TextArea } from "@/modules/components/form-field"
+import {
+  Label,
+  InputField,
+  TextArea,
+  InputSelect,
+} from "@/modules/components/form-field"
+import { productsTypeData } from "@/modules/admin/product-type/components/product-type"
+import { productsCategoryData } from "@/modules/admin/product-category/components/product-category"
 
 export interface ProductFormProps {
   open: boolean
@@ -24,7 +31,6 @@ export const ProductForm = ({
       productCategory: "",
       manufacturer: "",
       description: "",
-      //   status: false,
     },
   })
 
@@ -36,15 +42,19 @@ export const ProductForm = ({
       setValue("productCategory", editProduct.productCategory)
       setValue("manufacturer", editProduct.manufacturer)
       setValue("description", editProduct.description)
-      //   setValue("status", editProduct.status)
     } else {
       reset()
     }
   }, [editProduct, setValue, reset])
 
   const onSubmit = (data: Products) => {
-    onSave(data)
-    onClose()
+    if (editProduct) {
+      onSave({ ...editProduct, ...data })
+      onClose()
+    } else {
+      onSave(data)
+      onClose()
+    }
   }
 
   return (
@@ -66,19 +76,27 @@ export const ProductForm = ({
         </div>
         <div style={{ marginBottom: 16 }}>
           <Label>Product Type</Label>
-          {/* <InputSelect
+          <InputSelect
             placeholder="Select Product Type"
-            options={vendorData.map((product) => ({
-              label: product.vendorName,
+            options={productsTypeData.map((product) => ({
+              label: product.productType,
               value: product.id.toString(),
             }))}
-            name="vendorId"
+            name="productType"
             control={control}
-          /> */}
+          />
         </div>
         <div style={{ marginBottom: 16 }}>
           <Label>Product Category</Label>
-          <InputField control={control} name="productCategory" />
+          <InputSelect
+            placeholder="Select Product Type"
+            options={productsCategoryData.map((product) => ({
+              label: product.productCategory,
+              value: product.id.toString(),
+            }))}
+            name="productCategory"
+            control={control}
+          />
         </div>
         <div style={{ marginBottom: 16 }}>
           <Label>Manufacturer</Label>
@@ -92,15 +110,6 @@ export const ProductForm = ({
           <Label>Product Image</Label>
           <InputField control={control} name="productImage" />
         </div>
-        {/* <div style={{ marginBottom: 16 }}>
-          <Label>Active?</Label>
-          <Controller
-            control={control}
-            name="status"
-            defaultValue={false}
-            render={({ field }) => <Switch {...field} checked={field.value} />}
-          />
-        </div> */}
       </form>
     </Modal>
   )

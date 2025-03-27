@@ -1,35 +1,14 @@
 import React, { useEffect } from "react"
-import { Modal, Switch } from "antd"
-import { useForm, Controller } from "react-hook-form"
+import { Modal } from "antd"
+import { useForm } from "react-hook-form"
+import moment from "moment"
+
 import {
   Label,
   InputField,
   InputDate,
   FormButton,
 } from "@/modules/components/form-field"
-import moment from "moment"
-// Shared User interface (id is required)
-export interface User {
-  id: number
-  profilePic?: string
-  fullName?: string
-  email?: string
-  designation?: string
-  accessLevel?: string
-  lastLogin?: string
-  isActive?: boolean
-}
-
-// Form values type for react-hook-form
-interface FormValues {
-  fullName: string
-  email: string
-  profilePic: string
-  designation: string
-  accessLevel: string
-  lastLogin: moment.Moment | null
-  isActive: boolean
-}
 
 export interface UserFormProps {
   visible: boolean
@@ -44,7 +23,7 @@ const UserForm: React.FC<UserFormProps> = ({
   onSave,
   editData,
 }) => {
-  const { control, handleSubmit, reset } = useForm<FormValues>({
+  const { control, handleSubmit, reset } = useForm<User>({
     defaultValues: {
       fullName: "",
       email: "",
@@ -52,7 +31,6 @@ const UserForm: React.FC<UserFormProps> = ({
       designation: "",
       accessLevel: "",
       lastLogin: "",
-      isActive: false,
     },
   })
 
@@ -66,7 +44,6 @@ const UserForm: React.FC<UserFormProps> = ({
         designation: editData.designation || "",
         accessLevel: editData.accessLevel || "",
         lastLogin: editData.lastLogin ? moment(editData.lastLogin) : undefined,
-        isActive: editData.isActive || false,
       })
     } else {
       reset({
@@ -76,23 +53,18 @@ const UserForm: React.FC<UserFormProps> = ({
         designation: "",
         accessLevel: "",
         lastLogin: "",
-        isActive: false,
       })
     }
   }, [editData, reset])
 
-  const onSubmit = (values: FormValues) => {
-    const userToSave: User = {
-      ...values,
-      // Use the existing id if editing; otherwise generate one.
-      id: editData?.id || Date.now(),
-      // Convert the moment object from DatePicker back to an ISO string.
-      lastLogin: values.lastLogin
-        ? values.lastLogin.format("YYYY-MM-DD")
-        : undefined,
+  const onSubmit = (values: User) => {
+    if (editData) {
+      onSave({ ...editData, ...values })
+      onClose()
+    } else {
+      onSave(values)
+      onClose()
     }
-    onSave(userToSave)
-    onClose()
   }
 
   return (
@@ -126,15 +98,6 @@ const UserForm: React.FC<UserFormProps> = ({
         <div style={{ marginBottom: 16 }}>
           <Label>Last Login</Label>
           <InputDate control={control} name="lastLogin" />
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <Label>Active?</Label>
-          <Controller
-            control={control}
-            name="isActive"
-            defaultValue={false}
-            render={({ field }) => <Switch {...field} checked={field.value} />}
-          />
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <FormButton htmlType="button" onClick={onClose}>
