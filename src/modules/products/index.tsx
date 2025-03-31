@@ -46,7 +46,7 @@ const Product = () => {
       setProducts(
         (prevproducts) =>
           prevproducts &&
-          prevproducts.map((u) => (u.id === product.id ? product : u))
+          prevproducts.map((p) => (p.id === product.id ? product : p))
       )
     } else {
       setProducts((prevproducts) => prevproducts && [...prevproducts, product])

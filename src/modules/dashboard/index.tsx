@@ -1,9 +1,10 @@
-import useDocumentTitle from "@/lib/useDocumentTitle"
-import { Breadcrumb } from "@/modules/components/breadcrumb"
+import useDocumentTitle from "@/lib/useDocumentTitle";
+import { Breadcrumb } from "@/modules/components/breadcrumb";
 
 const Dashboard = () => {
-  useDocumentTitle("Dashboard - AMS")
+  useDocumentTitle("Dashboard - AMS");
 
+  return null;
   return (
     <main id="main" className="main">
       <div className="pagetitle">
@@ -723,7 +724,7 @@ const Dashboard = () => {
         </div>
       </section>
     </main>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

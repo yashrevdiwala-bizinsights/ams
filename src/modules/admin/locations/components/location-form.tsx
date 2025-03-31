@@ -60,7 +60,7 @@ export const LocationForm = ({
       onOk={handleSubmit(onSubmit)}
     >
       <h2 className="fs-6 text-center fw-bold text-muted mb-2">
-        {editLocation ? "Update Product Category" : "Add Product Category"}
+        {editLocation ? "Edit Product Category" : "Add Product Category"}
       </h2>
 
       <form>

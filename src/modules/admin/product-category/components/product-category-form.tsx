@@ -1,14 +1,14 @@
-import { useEffect } from "react"
-import { Modal } from "antd"
+import { useEffect } from "react";
+import { Modal } from "antd";
 
-import { InputField, Label } from "@/modules/components/form-field"
-import { useForm } from "react-hook-form"
+import { InputField, Label } from "@/modules/components/form-field";
+import { useForm } from "react-hook-form";
 
 interface ProductCategoryFormProps {
-  open: boolean
-  editProductCategory: ProductCategory | null
-  onSave: (product: ProductCategory) => void
-  onClose: () => void
+  open: boolean;
+  editProductCategory: ProductCategory | null;
+  onSave: (product: ProductCategory) => void;
+  onClose: () => void;
 }
 
 export const ProductCategoryForm = ({
@@ -21,20 +21,20 @@ export const ProductCategoryForm = ({
     defaultValues: {
       productCategory: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (editProductCategory) {
-      setValue("productCategory", editProductCategory.productCategory)
+      setValue("productCategory", editProductCategory.productCategory);
     } else {
-      reset()
+      reset();
     }
-  }, [editProductCategory, setValue, reset])
+  }, [editProductCategory, setValue, reset]);
 
   const onSubmit = (data: ProductCategory) => {
-    onSave(data)
-    onClose()
-  }
+    onSave(data);
+    onClose();
+  };
 
   return (
     <Modal
@@ -46,9 +46,7 @@ export const ProductCategoryForm = ({
       onOk={handleSubmit(onSubmit)}
     >
       <h2 className="fs-6 text-center fw-bold text-muted mb-2">
-        {editProductCategory
-          ? "Update Product Category"
-          : "Add Product Category"}
+        {editProductCategory ? "Edit Product Category" : "Add Product Category"}
       </h2>
 
       <form>
@@ -62,5 +60,5 @@ export const ProductCategoryForm = ({
         </div>
       </form>
     </Modal>
-  )
-}
+  );
+};

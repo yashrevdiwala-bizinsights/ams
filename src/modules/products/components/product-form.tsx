@@ -66,7 +66,7 @@ export const ProductForm = ({
       onOk={handleSubmit(onSubmit)}
     >
       <h2 className="fs-6 text-center fw-bold text-muted mb-2">
-        {editProduct ? "Update Product" : "Add New Product"}
+        {editProduct ? "Edit Product" : "Add Product"}
       </h2>
 
       <form>

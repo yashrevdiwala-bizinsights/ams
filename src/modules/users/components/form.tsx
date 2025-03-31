@@ -1,29 +1,24 @@
-import React, { useEffect } from "react"
-import { Modal } from "antd"
-import { useForm } from "react-hook-form"
-import moment from "moment"
+import { useEffect } from "react";
+import { Modal } from "antd";
+import { useForm } from "react-hook-form";
+import moment from "moment";
 
-import {
-  Label,
-  InputField,
-  InputDate,
-  FormButton,
-} from "@/modules/components/form-field"
+import { Label, InputField, InputDate } from "@/modules/components/form-field";
 
 export interface UserFormProps {
-  visible: boolean
-  onClose: () => void
-  onSave: (user: User) => void
-  editData?: User | null
+  open: boolean;
+  editUser: User | null;
+  onSave: (user: User) => void;
+  onClose: () => void;
 }
 
-const UserForm: React.FC<UserFormProps> = ({
-  visible,
-  onClose,
+export const UserForm = ({
+  open,
+  editUser,
   onSave,
-  editData,
-}) => {
-  const { control, handleSubmit, reset } = useForm<User>({
+  onClose,
+}: UserFormProps) => {
+  const { control, setValue, handleSubmit, reset } = useForm<User>({
     defaultValues: {
       fullName: "",
       email: "",
@@ -32,49 +27,48 @@ const UserForm: React.FC<UserFormProps> = ({
       accessLevel: "",
       lastLogin: "",
     },
-  })
+  });
 
-  // When editData is provided, pre-fill the form.
+  // When editUser is provided, pre-fill the form.
   useEffect(() => {
-    if (editData) {
-      reset({
-        fullName: editData.fullName || "",
-        email: editData.email || "",
-        profilePic: editData.profilePic || "",
-        designation: editData.designation || "",
-        accessLevel: editData.accessLevel || "",
-        lastLogin: editData.lastLogin ? moment(editData.lastLogin) : undefined,
-      })
+    if (editUser) {
+      setValue("fullName", editUser.fullName);
+      setValue("email", editUser.email);
+      setValue("profilePic", editUser.profilePic);
+      setValue("designation", editUser.designation);
+      setValue("accessLevel", editUser.accessLevel);
+      setValue(
+        "lastLogin",
+        editUser.lastLogin ? moment(editUser.lastLogin) : undefined
+      );
     } else {
-      reset({
-        fullName: "",
-        email: "",
-        profilePic: "",
-        designation: "",
-        accessLevel: "",
-        lastLogin: "",
-      })
+      reset();
     }
-  }, [editData, reset])
+  }, [editUser, setValue, reset]);
 
-  const onSubmit = (values: User) => {
-    if (editData) {
-      onSave({ ...editData, ...values })
-      onClose()
+  const onSubmit = (data: User) => {
+    if (editUser) {
+      onSave({ ...editUser, ...data });
+      onClose();
     } else {
-      onSave(values)
-      onClose()
+      onSave(data);
+      onClose();
     }
-  }
+  };
 
   return (
     <Modal
-      title={editData ? "Update User" : "Add New User"}
-      open={visible}
+      open={open}
+      okText={editUser ? "Update" : "Add"}
       onCancel={onClose}
-      footer={null}
+      onClose={onClose}
+      onOk={handleSubmit(onSubmit)}
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <h2 className="fs-6 text-center fw-bold text-muted mb-2">
+        {editUser ? "Edit User" : "Add User"}
+      </h2>
+
+      <form>
         <div style={{ marginBottom: 16 }}>
           <Label>Full Name</Label>
           <InputField control={control} name="fullName" />
@@ -99,17 +93,9 @@ const UserForm: React.FC<UserFormProps> = ({
           <Label>Last Login</Label>
           <InputDate control={control} name="lastLogin" />
         </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <FormButton htmlType="button" onClick={onClose}>
-            Cancel
-          </FormButton>
-          <FormButton htmlType="submit" color="primary" variant="solid">
-            {editData ? "Update" : "Add"}
-          </FormButton>
-        </div>
       </form>
     </Modal>
-  )
-}
+  );
+};
 
-export default UserForm
+export default UserForm;

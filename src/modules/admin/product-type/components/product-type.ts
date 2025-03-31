@@ -1,17 +1,17 @@
 export const productsTypeData: ProductType[] = [
   {
     id: 1,
-    productType: "Household",
+    productType: "work laptop",
     status: true,
   },
   {
     id: 2,
-    productType: "Beauty",
-    status: false,
+    productType: "gaming laptop",
+    status: true,
   },
   {
     id: 3,
-    productType: "Shopping",
+    productType: "student laptop",
     status: true,
   },
 ]

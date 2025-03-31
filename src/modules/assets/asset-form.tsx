@@ -1,11 +1,11 @@
-import { useEffect } from "react"
-import { useNavigate, useParams } from "react-router"
-import { useForm } from "react-hook-form"
-import moment from "moment"
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useForm } from "react-hook-form";
+import moment from "moment";
 
-import useDocumentTitle from "@/lib/useDocumentTitle"
-import { BackButton } from "@/modules/components/back-button"
-import { Breadcrumb } from "@/modules/components/breadcrumb"
+import useDocumentTitle from "@/lib/useDocumentTitle";
+import { BackButton } from "@/modules/components/back-button";
+import { Breadcrumb } from "@/modules/components/breadcrumb";
 import {
   FormButton,
   InputDate,
@@ -13,19 +13,19 @@ import {
   InputSelect,
   Label,
   TextArea,
-} from "@/modules/components/form-field"
-import { locationData } from "@/modules/admin/locations/components/location"
-import { productsData } from "@/modules/products/components/products"
-import { vendorData } from "@/modules/vendors/components/vendor-data"
-import { assetData } from "./components/asset-data"
+} from "@/modules/components/form-field";
+import { locationData } from "@/modules/admin/locations/components/location";
+import { productsData } from "@/modules/products/components/products";
+import { vendorData } from "@/modules/vendors/components/vendor-data";
+import { assetData } from "./components/asset-data";
 
 const AssetForm = () => {
-  const navigate = useNavigate()
-  const { id } = useParams()
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-  useDocumentTitle(`${id ? "Update" : "Add"} Asset - AMS`)
+  useDocumentTitle(`${id ? "Update" : "Add"} Asset - AMS`);
 
-  const editAsset = id ? assetData.find((a) => a.id === Number(id)) : null
+  const editAsset = id ? assetData.find((a) => a.id === Number(id)) : null;
 
   const { control, setValue, reset, handleSubmit } = useForm<AssetType>({
     defaultValues: {
@@ -40,29 +40,29 @@ const AssetForm = () => {
       warrantyExpires: moment(),
       description: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (editAsset) {
-      setValue("productId", editAsset.productId)
-      setValue("vendorId", editAsset.vendorId)
-      setValue("officeLocation", editAsset.officeLocation)
-      setValue("assetName", editAsset.assetName)
-      setValue("serialNumber", editAsset.serialNumber)
-      setValue("price", editAsset.price)
-      setValue("purchaseType", editAsset.purchaseType)
-      setValue("purchaseDate", editAsset.purchaseDate)
-      setValue("warrantyExpires", editAsset.warrantyExpires)
-      setValue("description", editAsset.description)
+      setValue("productId", editAsset.productId);
+      setValue("vendorId", editAsset.vendorId);
+      setValue("officeLocation", editAsset.officeLocation);
+      setValue("assetName", editAsset.assetName);
+      setValue("serialNumber", editAsset.serialNumber);
+      setValue("price", editAsset.price);
+      setValue("purchaseType", editAsset.purchaseType);
+      setValue("purchaseDate", moment(editAsset.purchaseDate));
+      setValue("warrantyExpires", editAsset.warrantyExpires);
+      setValue("description", editAsset.description);
     } else {
-      reset()
+      reset();
     }
-  }, [editAsset, setValue, reset])
+  }, [editAsset, setValue, reset]);
 
   const onSubmit = (data: AssetType) => {
-    console.log(data)
-    navigate("/admin/assets")
-  }
+    console.log(data);
+    navigate("/admin/assets");
+  };
 
   return (
     <main id="main" className="main">
@@ -193,7 +193,7 @@ const AssetForm = () => {
         </div>
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default AssetForm
+export default AssetForm;

@@ -8,7 +8,7 @@ export const usersData: User[] = [
     email: "johndoe@example.com",
     designation: "Project Manager",
     accessLevel: "Full",
-    lastLogin: moment("2024-02-28"),
+    lastLogin: moment("02-21-2024"),
     status: true,
   },
   {
@@ -19,7 +19,7 @@ export const usersData: User[] = [
     email: "janesmith@example.com",
     designation: "User",
     accessLevel: "Limited",
-    lastLogin: moment("2022-12-08"),
+    lastLogin: moment("08-12-2024"),
     status: false,
   },
 ]

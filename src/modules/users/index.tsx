@@ -1,61 +1,55 @@
-import React, { useEffect, useState } from "react"
-import { useNavigate } from "react-router"
-import { Avatar, Switch, Table } from "antd"
-import { ColumnsType } from "antd/es/table"
-import { Eye, Pencil, Plus, Trash } from "lucide-react"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { Avatar, Switch, Table } from "antd";
+import { ColumnsType } from "antd/es/table";
+import { Eye, Pencil, Plus, Trash } from "lucide-react";
 
-import useDocumentTitle from "@/lib/useDocumentTitle"
-import { Breadcrumb } from "@/modules/components/breadcrumb"
-import { ExcelDownload } from "@/modules/components/excel-download"
-import { FormButton } from "@/modules/components/form-field"
-import UserForm from "./components/form"
-import { usersData } from "./components/users"
-import moment from "moment"
+import useDocumentTitle from "@/lib/useDocumentTitle";
+import { Breadcrumb } from "@/modules/components/breadcrumb";
+import { ExcelDownload } from "@/modules/components/excel-download";
+import { FormButton } from "@/modules/components/form-field";
+import UserForm from "./components/form";
+import { usersData } from "./components/users";
+import moment from "moment";
 
-const UserPage: React.FC = () => {
-  useDocumentTitle("Users - AMS")
+const User = () => {
+  useDocumentTitle("Users - AMS");
 
-  const navigate = useNavigate()
-
-  const [users, setUsers] = useState<User[]>()
+  const navigate = useNavigate();
+  const [users, setUsers] = useState<User[]>();
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   useEffect(() => {
-    setUsers(usersData)
-  }, [])
-
-  const [showModal, setShowModal] = useState<boolean>(false)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+    setUsers(usersData);
+  }, []);
 
   const handleModalClose = () => {
-    setShowModal(false)
-    setSelectedUser(null)
-  }
+    setShowModal(false);
+    setSelectedUser(null);
+  };
 
   const handleEditClick = (user: User) => {
-    setSelectedUser(user)
-    setShowModal(true)
-  }
+    setSelectedUser(user);
+    setShowModal(true);
+  };
 
   const handleDelete = (userId: number) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users && users.filter((user) => user.id !== userId))
+      setUsers(users && users.filter((user) => user.id !== userId));
     }
-  }
-
-  const handleView = (user: User) => {
-    navigate("/admin/users/view/" + user.id)
-  }
+  };
 
   const handleSaveUser = (user: User) => {
     if (selectedUser) {
       setUsers(
         (prevUsers) =>
           prevUsers && prevUsers.map((u) => (u.id === user.id ? user : u))
-      )
+      );
     } else {
-      setUsers((prevUsers) => prevUsers && [...prevUsers, user])
+      setUsers((prevUsers) => prevUsers && [...prevUsers, user]);
     }
-  }
+  };
 
   const columns: ColumnsType<User> = [
     { title: "ID", dataIndex: "id", key: "id", fixed: "left" },
@@ -90,7 +84,7 @@ const UserPage: React.FC = () => {
           <FormButton
             variant="text"
             icon={<Eye />}
-            onClick={() => handleView(user)}
+            onClick={() => navigate(`/admin/users/view/${user.id}`)}
           />
           <FormButton
             variant="text"
@@ -106,7 +100,7 @@ const UserPage: React.FC = () => {
         </div>
       ),
     },
-  ]
+  ];
 
   return (
     <main id="main" className="main">
@@ -145,14 +139,14 @@ const UserPage: React.FC = () => {
       {showModal && (
         <UserForm
           key={selectedUser ? selectedUser.id : "new"}
-          visible={showModal}
+          open={showModal}
           onClose={handleModalClose}
           onSave={handleSaveUser}
-          editData={selectedUser}
+          editUser={selectedUser}
         />
       )}
     </main>
-  )
-}
+  );
+};
 
-export default UserPage
+export default User;
