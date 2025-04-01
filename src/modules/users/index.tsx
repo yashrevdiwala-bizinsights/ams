@@ -2,15 +2,17 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 import { Avatar, Switch, Table } from "antd"
 import { ColumnsType } from "antd/es/table"
+import moment from "moment"
 import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
 import useDocumentTitle from "@/lib/useDocumentTitle"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
+import { DeleteModal } from "@/modules/components/delete-modal"
 import { ExcelDownload } from "@/modules/components/excel-download"
 import { FormButton } from "@/modules/components/form-field"
+import { Search } from "@/modules/components/search"
 import UserForm from "./components/form"
 import { usersData } from "./components/users"
-import moment from "moment"
 
 const User = () => {
   useDocumentTitle("Users - AMS")
@@ -18,11 +20,26 @@ const User = () => {
   const navigate = useNavigate()
   const [users, setUsers] = useState<User[]>()
   const [showModal, setShowModal] = useState<boolean>(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   useEffect(() => {
     setUsers(usersData)
   }, [])
+
+  const handleSearch = (value: string) => {
+    if (value && users) {
+      const filteredUsers = users.filter(
+        (user) =>
+          user.fullName?.toLowerCase().includes(value.toLowerCase()) ||
+          user.email?.toLowerCase().includes(value.toLowerCase())
+      )
+
+      setUsers(filteredUsers)
+    } else {
+      setUsers(usersData)
+    }
+  }
 
   const handleModalClose = () => {
     setShowModal(false)
@@ -35,9 +52,7 @@ const User = () => {
   }
 
   const handleDelete = (userId: number) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users && users.filter((user) => user.id !== userId))
-    }
+    setUsers(users && users.filter((user) => user.id !== userId))
   }
 
   const handleSaveUser = (user: User) => {
@@ -95,7 +110,10 @@ const User = () => {
             variant="text"
             color="danger"
             icon={<Trash />}
-            onClick={() => handleDelete(user.id)}
+            onClick={() => {
+              setSelectedUser(user)
+              setShowDeleteModal(true)
+            }}
           />
         </div>
       ),
@@ -109,6 +127,13 @@ const User = () => {
         <Breadcrumb menu="Master" active="Users" />
       </div>
 
+      <DeleteModal
+        open={showDeleteModal}
+        data={selectedUser}
+        handleDelete={handleDelete}
+        onClose={() => setSelectedUser(null)}
+      />
+
       <div
         className="d-flex justify-content-between align-items-center"
         style={{ marginBottom: 16 }}
@@ -121,9 +146,13 @@ const User = () => {
           Add User
         </FormButton>
 
-        {users && users.length > 0 && (
-          <ExcelDownload data={users} sheetName="users" />
-        )}
+        <div className="d-flex align-items-center gap-2">
+          {users && users.length > 0 && (
+            <ExcelDownload data={users} sheetName="users" />
+          )}
+
+          <Search handleSearch={handleSearch} />
+        </div>
       </div>
 
       <Table
@@ -136,15 +165,13 @@ const User = () => {
         }}
       />
 
-      {showModal && (
-        <UserForm
-          key={selectedUser ? selectedUser.id : "new"}
-          open={showModal}
-          onClose={handleModalClose}
-          onSave={handleSaveUser}
-          editUser={selectedUser}
-        />
-      )}
+      <UserForm
+        key={selectedUser ? selectedUser.id : "new"}
+        open={showModal}
+        onClose={handleModalClose}
+        onSave={handleSaveUser}
+        editUser={selectedUser}
+      />
     </main>
   )
 }
