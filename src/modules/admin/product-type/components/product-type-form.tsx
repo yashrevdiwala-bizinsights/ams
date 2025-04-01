@@ -1,13 +1,13 @@
-import { useEffect } from "react";
-import { Modal } from "antd";
-import { useForm } from "react-hook-form";
-import { Label, InputField } from "@/modules/components/form-field";
+import { useEffect } from "react"
+import { Modal } from "antd"
+import { useForm } from "react-hook-form"
+import { Label, InputField } from "@/modules/components/form-field"
 
 export interface ProductTypeFormProps {
-  open: boolean;
-  editProductType: ProductType | null;
-  onSave: (product: ProductType) => void;
-  onClose: () => void;
+  open: boolean
+  editProductType: ProductType | null
+  onSave: (product: ProductType) => void
+  onClose: () => void
 }
 
 export const ProductTypeForm = ({
@@ -20,20 +20,20 @@ export const ProductTypeForm = ({
     defaultValues: {
       productType: "",
     },
-  });
+  })
 
   useEffect(() => {
     if (editProductType) {
-      setValue("productType", editProductType.productType);
+      setValue("productType", editProductType.productType)
     } else {
-      reset();
+      reset()
     }
-  }, [editProductType, setValue, reset]);
+  }, [editProductType, setValue, reset])
 
   const onSubmit = (data: ProductType) => {
-    onSave(data);
-    onClose();
-  };
+    onSave(data)
+    onClose()
+  }
 
   return (
     <Modal
@@ -59,7 +59,7 @@ export const ProductTypeForm = ({
         </div>
       </form>
     </Modal>
-  );
-};
+  )
+}
 
-export default ProductTypeForm;
+export default ProductTypeForm

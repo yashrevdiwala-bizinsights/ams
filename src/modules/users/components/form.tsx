@@ -1,15 +1,15 @@
-import { useEffect } from "react";
-import { Modal } from "antd";
-import { useForm } from "react-hook-form";
-import moment from "moment";
+import { useEffect } from "react"
+import { Modal } from "antd"
+import { useForm } from "react-hook-form"
+import moment from "moment"
 
-import { Label, InputField, InputDate } from "@/modules/components/form-field";
+import { Label, InputField, InputDate } from "@/modules/components/form-field"
 
 export interface UserFormProps {
-  open: boolean;
-  editUser: User | null;
-  onSave: (user: User) => void;
-  onClose: () => void;
+  open: boolean
+  editUser: User | null
+  onSave: (user: User) => void
+  onClose: () => void
 }
 
 export const UserForm = ({
@@ -27,34 +27,34 @@ export const UserForm = ({
       accessLevel: "",
       lastLogin: "",
     },
-  });
+  })
 
   // When editUser is provided, pre-fill the form.
   useEffect(() => {
     if (editUser) {
-      setValue("fullName", editUser.fullName);
-      setValue("email", editUser.email);
-      setValue("profilePic", editUser.profilePic);
-      setValue("designation", editUser.designation);
-      setValue("accessLevel", editUser.accessLevel);
+      setValue("fullName", editUser.fullName)
+      setValue("email", editUser.email)
+      setValue("profilePic", editUser.profilePic)
+      setValue("designation", editUser.designation)
+      setValue("accessLevel", editUser.accessLevel)
       setValue(
         "lastLogin",
         editUser.lastLogin ? moment(editUser.lastLogin) : undefined
-      );
+      )
     } else {
-      reset();
+      reset()
     }
-  }, [editUser, setValue, reset]);
+  }, [editUser, setValue, reset])
 
   const onSubmit = (data: User) => {
     if (editUser) {
-      onSave({ ...editUser, ...data });
-      onClose();
+      onSave({ ...editUser, ...data })
+      onClose()
     } else {
-      onSave(data);
-      onClose();
+      onSave(data)
+      onClose()
     }
-  };
+  }
 
   return (
     <Modal
@@ -95,7 +95,7 @@ export const UserForm = ({
         </div>
       </form>
     </Modal>
-  );
-};
+  )
+}
 
-export default UserForm;
+export default UserForm

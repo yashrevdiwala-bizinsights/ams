@@ -1,8 +1,7 @@
 export const productsData = [
   {
     id: 1,
-    productImage:
-      "/assets/img/laptop_img_1.jpg",
+    productImage: "/assets/img/laptop_img_1.jpg",
     productName: "Macbook",
     productType: "work laptop",
     productCategory: "Macbook",
@@ -12,8 +11,7 @@ export const productsData = [
   },
   {
     id: 2,
-    productImage:
-      "/assets/img/laptop_img_3.jpeg",
+    productImage: "/assets/img/laptop_img_3.jpeg",
     productName: "Lenevo Laptop",
     productType: "work laptop",
     productCategory: "Laptop",
@@ -23,8 +21,7 @@ export const productsData = [
   },
   {
     id: 3,
-    productImage:
-      "/assets/img/laptop_img_2.jpeg",
+    productImage: "/assets/img/laptop_img_2.jpeg",
     productName: "Dell Laptop",
     productType: "work laptop",
     productCategory: "Laptop",
@@ -34,8 +31,7 @@ export const productsData = [
   },
   {
     id: 4,
-    productImage:
-      "/assets/img/laptop_img_2.jpeg",
+    productImage: "/assets/img/laptop_img_2.jpeg",
     productName: "HP Laptop",
     productType: "work laptop",
     productCategory: "Laptop",

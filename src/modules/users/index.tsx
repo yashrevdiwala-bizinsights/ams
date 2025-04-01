@@ -1,55 +1,55 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { Avatar, Switch, Table } from "antd";
-import { ColumnsType } from "antd/es/table";
-import { Eye, Pencil, Plus, Trash } from "lucide-react";
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router"
+import { Avatar, Switch, Table } from "antd"
+import { ColumnsType } from "antd/es/table"
+import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
-import useDocumentTitle from "@/lib/useDocumentTitle";
-import { Breadcrumb } from "@/modules/components/breadcrumb";
-import { ExcelDownload } from "@/modules/components/excel-download";
-import { FormButton } from "@/modules/components/form-field";
-import UserForm from "./components/form";
-import { usersData } from "./components/users";
-import moment from "moment";
+import useDocumentTitle from "@/lib/useDocumentTitle"
+import { Breadcrumb } from "@/modules/components/breadcrumb"
+import { ExcelDownload } from "@/modules/components/excel-download"
+import { FormButton } from "@/modules/components/form-field"
+import UserForm from "./components/form"
+import { usersData } from "./components/users"
+import moment from "moment"
 
 const User = () => {
-  useDocumentTitle("Users - AMS");
+  useDocumentTitle("Users - AMS")
 
-  const navigate = useNavigate();
-  const [users, setUsers] = useState<User[]>();
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const navigate = useNavigate()
+  const [users, setUsers] = useState<User[]>()
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   useEffect(() => {
-    setUsers(usersData);
-  }, []);
+    setUsers(usersData)
+  }, [])
 
   const handleModalClose = () => {
-    setShowModal(false);
-    setSelectedUser(null);
-  };
+    setShowModal(false)
+    setSelectedUser(null)
+  }
 
   const handleEditClick = (user: User) => {
-    setSelectedUser(user);
-    setShowModal(true);
-  };
+    setSelectedUser(user)
+    setShowModal(true)
+  }
 
   const handleDelete = (userId: number) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users && users.filter((user) => user.id !== userId));
+      setUsers(users && users.filter((user) => user.id !== userId))
     }
-  };
+  }
 
   const handleSaveUser = (user: User) => {
     if (selectedUser) {
       setUsers(
         (prevUsers) =>
           prevUsers && prevUsers.map((u) => (u.id === user.id ? user : u))
-      );
+      )
     } else {
-      setUsers((prevUsers) => prevUsers && [...prevUsers, user]);
+      setUsers((prevUsers) => prevUsers && [...prevUsers, user])
     }
-  };
+  }
 
   const columns: ColumnsType<User> = [
     { title: "ID", dataIndex: "id", key: "id", fixed: "left" },
@@ -100,7 +100,7 @@ const User = () => {
         </div>
       ),
     },
-  ];
+  ]
 
   return (
     <main id="main" className="main">
@@ -146,7 +146,7 @@ const User = () => {
         />
       )}
     </main>
-  );
-};
+  )
+}
 
-export default User;
+export default User
