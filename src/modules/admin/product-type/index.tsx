@@ -8,6 +8,7 @@ import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { FormButton } from "@/modules/components/form-field"
 import { ProductTypeForm } from "./components/product-type-form"
 import { productsTypeData } from "./components/product-type"
+import { Search } from "@/modules/components/search"
 
 const ProductType = () => {
   useDocumentTitle("Product Types - AMS")
@@ -20,6 +21,18 @@ const ProductType = () => {
   useEffect(() => {
     setProductTypes(productsTypeData)
   }, [])
+
+  const handleSearch = (value: string) => {
+    if (value && productTypes) {
+      const filteredUsers = productTypes.filter((productType) =>
+        productType.productType?.toLowerCase().includes(value.toLowerCase())
+      )
+
+      setProductTypes(filteredUsers)
+    } else {
+      setProductTypes(productsTypeData)
+    }
+  }
 
   const handleEditClick = (product: ProductType) => {
     setSelectedProductType(product)
@@ -102,7 +115,10 @@ const ProductType = () => {
         <Breadcrumb menu="Master" active="Product Types" />
       </div>
 
-      <div style={{ marginBottom: 16 }}>
+      <div
+        className="d-flex justify-content-between align-items-center"
+        style={{ marginBottom: 16 }}
+      >
         <FormButton
           color="primary"
           icon={<Plus />}
@@ -110,6 +126,9 @@ const ProductType = () => {
         >
           Add Product Type
         </FormButton>
+        <div className="d-flex align-items-center gap-2">
+          <Search handleSearch={handleSearch} />
+        </div>
       </div>
 
       <Table

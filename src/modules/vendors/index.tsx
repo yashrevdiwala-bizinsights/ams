@@ -10,6 +10,7 @@ import { ExcelDownload } from "@/modules//components/excel-download"
 import { FormButton } from "@/modules/components/form-field"
 import { vendorData } from "./components/vendor-data"
 import { VendorForm } from "./components/vendor-form"
+import { Search } from "../components/search"
 
 const Vendors = () => {
   useDocumentTitle("Vendors - AMS")
@@ -22,6 +23,20 @@ const Vendors = () => {
   useEffect(() => {
     setVendors(vendorData)
   }, [])
+
+  const handleSearch = (value: string) => {
+    if (value && vendors) {
+      const filteredVendors = vendors.filter(
+        (vendor) =>
+          vendor.vendorName?.toLowerCase().includes(value.toLowerCase()) ||
+          vendor.email?.toLowerCase().includes(value.toLowerCase())
+      )
+
+      setVendors(filteredVendors)
+    } else {
+      setVendors(vendorData)
+    }
+  }
 
   const handleEdit = (vendor: VendorsType) => {
     setSelectedVendor(vendor)
@@ -125,9 +140,12 @@ const Vendors = () => {
           Add Vendor
         </FormButton>
 
-        {vendors && vendors.length > 0 && (
-          <ExcelDownload data={vendors} sheetName="vendors" />
-        )}
+        <div className="d-flex align-items-center gap-2">
+          {vendors && vendors.length > 0 && (
+            <ExcelDownload data={vendors} sheetName="vendors" />
+          )}
+          <Search handleSearch={handleSearch} />
+        </div>
       </div>
 
       <Table

@@ -8,6 +8,7 @@ import { FormButton } from "@/modules/components/form-field"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { ProductCategoryForm } from "./components/product-category-form"
 import { productsCategoryData } from "./components/product-category"
+import { Search } from "@/modules/components/search"
 
 const ProductCategory = () => {
   useDocumentTitle("Product Categories - AMS")
@@ -20,6 +21,20 @@ const ProductCategory = () => {
   useEffect(() => {
     setProductCategory(productsCategoryData)
   }, [])
+
+  const handleSearch = (value: string) => {
+    if (value && productCategory) {
+      const filteredUsers = productCategory.filter((productsCategory) =>
+        productsCategory.productCategory
+          ?.toLowerCase()
+          .includes(value.toLowerCase())
+      )
+
+      setProductCategory(filteredUsers)
+    } else {
+      setProductCategory(productsCategoryData)
+    }
+  }
 
   const handleEdit = (productCat: ProductCategory) => {
     setSelectedProductCat(productCat)
@@ -107,7 +122,10 @@ const ProductCategory = () => {
         <Breadcrumb menu="Master" active="Product Categories" />
       </div>
 
-      <div style={{ marginBottom: 16 }}>
+      <div
+        className="d-flex justify-content-between align-items-center"
+        style={{ marginBottom: 16 }}
+      >
         <FormButton
           color="primary"
           icon={<Plus />}
@@ -115,6 +133,9 @@ const ProductCategory = () => {
         >
           Add Product Category
         </FormButton>
+        <div className="d-flex align-items-center gap-2">
+          <Search handleSearch={handleSearch} />
+        </div>
       </div>
 
       <Table

@@ -10,6 +10,7 @@ import { ExcelDownload } from "@/modules/components/excel-download"
 import { FormButton } from "@/modules/components/form-field"
 import { ProductForm } from "./components/product-form"
 import { productsData } from "./components/products"
+import { Search } from "../components/search"
 
 const Product = () => {
   useDocumentTitle("Products - AMS")
@@ -22,6 +23,21 @@ const Product = () => {
   useEffect(() => {
     setProducts(productsData)
   }, [])
+
+  const handleSearch = (value: string) => {
+    if (value && products) {
+      const filteredProducts = products.filter(
+        (product) =>
+          product.productName?.toLowerCase().includes(value.toLowerCase()) ||
+          product.productType?.toLowerCase().includes(value.toLowerCase()) ||
+          product.productCategory?.toLowerCase().includes(value.toLowerCase())
+      )
+
+      setProducts(filteredProducts)
+    } else {
+      setProducts(productsData)
+    }
+  }
 
   const handleEditClick = (product: Products) => {
     setSelectedProduct(product)
@@ -120,9 +136,13 @@ const Product = () => {
           Add Product
         </FormButton>
 
-        {products && products.length > 0 && (
-          <ExcelDownload data={products} sheetName="products" />
-        )}
+        <div className="d-flex align-items-center gap-2">
+          {products && products.length > 0 && (
+            <ExcelDownload data={products} sheetName="products" />
+          )}
+
+          <Search handleSearch={handleSearch} />
+        </div>
       </div>
 
       <Table

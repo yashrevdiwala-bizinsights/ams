@@ -11,6 +11,7 @@ import { FormButton } from "@/modules/components/form-field"
 import { productsData } from "@/modules/products/components/products"
 import { vendorData } from "@/modules/vendors/components/vendor-data"
 import { assetData } from "./components/asset-data"
+import { Search } from "../components/search"
 
 const Assets = () => {
   useDocumentTitle("Assets - AMS")
@@ -21,6 +22,20 @@ const Assets = () => {
   useEffect(() => {
     setAssets(assetData)
   }, [])
+
+  const handleSearch = (value: string) => {
+    if (value && assets) {
+      const filteredAssets = assets.filter(
+        (asset) =>
+          asset.assetName?.toLowerCase().includes(value.toLowerCase()) ||
+          asset.vendorId?.toLowerCase().includes(value.toLowerCase())
+      )
+
+      setAssets(filteredAssets)
+    } else {
+      setAssets(assetData)
+    }
+  }
 
   const handleRemove = (id: number) => {
     const newAssets = assets?.filter((asset) => asset.id !== id)
@@ -121,9 +136,13 @@ const Assets = () => {
           Add Asset
         </FormButton>
 
-        {assets && assets.length > 0 && (
-          <ExcelDownload data={assets} sheetName="assets" />
-        )}
+        <div className="d-flex align-items-center gap-2">
+          {assets && assets.length > 0 && (
+            <ExcelDownload data={assets} sheetName="assets" />
+          )}
+
+          <Search handleSearch={handleSearch} />
+        </div>
       </div>
 
       <Table

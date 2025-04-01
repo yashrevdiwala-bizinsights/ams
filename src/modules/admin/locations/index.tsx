@@ -9,6 +9,7 @@ import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { LocationForm } from "./components/location-form"
 import { locationData } from "./components/location"
 import { useNavigate } from "react-router"
+import { Search } from "@/modules/components/search"
 
 const Location = () => {
   useDocumentTitle("Locations - AMS")
@@ -23,6 +24,20 @@ const Location = () => {
   useEffect(() => {
     setLocation(locationData)
   }, [])
+
+  const handleSearch = (value: string) => {
+    if (value && location) {
+      const filteredUsers = location.filter(
+        (location) =>
+          location.address1?.toLowerCase().includes(value.toLowerCase()) ||
+          location.address2?.toLowerCase().includes(value.toLowerCase())
+      )
+
+      setLocation(filteredUsers)
+    } else {
+      setLocation(locationData)
+    }
+  }
 
   const handleEdit = (location: LocationType) => {
     setSelectedLocation(location)
@@ -137,7 +152,10 @@ const Location = () => {
         <Breadcrumb menu="Master" active="Locations" />
       </div>
 
-      <div style={{ marginBottom: 16 }}>
+      <div
+        className="d-flex justify-content-between align-items-center"
+        style={{ marginBottom: 16 }}
+      >
         <FormButton
           color="primary"
           icon={<Plus />}
@@ -145,6 +163,9 @@ const Location = () => {
         >
           Add Location
         </FormButton>
+        <div className="d-flex align-items-center gap-2">
+          <Search handleSearch={handleSearch} />
+        </div>
       </div>
 
       <Table
