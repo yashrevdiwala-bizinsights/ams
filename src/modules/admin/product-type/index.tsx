@@ -9,12 +9,14 @@ import { FormButton } from "@/modules/components/form-field"
 import { ProductTypeForm } from "./components/product-type-form"
 import { productsTypeData } from "./components/product-type"
 import { Search } from "@/modules/components/search"
+import { DeleteModal } from "@/modules/components/delete-modal"
 
 const ProductType = () => {
   useDocumentTitle("Product Types - AMS")
 
   const [productTypes, setProductTypes] = useState<ProductType[]>()
   const [modalVisible, setModalmodalVisible] = useState<boolean>(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [selectedProductType, setSelectedProductType] =
     useState<ProductType | null>(null)
 
@@ -45,11 +47,9 @@ const ProductType = () => {
   }
 
   const handleDelete = (productTypeId: number) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      setProductTypes(
-        productTypes && productTypes.filter((type) => type.id !== productTypeId)
-      )
-    }
+    setProductTypes(
+      productTypes && productTypes.filter((type) => type.id !== productTypeId)
+    )
   }
 
   const handleSaveUser = (product: ProductType) => {
@@ -57,7 +57,7 @@ const ProductType = () => {
       setProductTypes(
         (prevProductTypes) =>
           prevProductTypes &&
-          prevProductTypes.map((u) => (u.id === product.id ? product : u))
+          prevProductTypes.map((p) => (p.id === product.id ? product : p))
       )
     } else {
       setProductTypes(
@@ -101,7 +101,10 @@ const ProductType = () => {
             variant="text"
             color="danger"
             icon={<Trash />}
-            onClick={() => handleDelete(productType.id)}
+            onClick={() => {
+              setSelectedProductType(productType)
+              setShowDeleteModal(true)
+            }}
           />
         </div>
       ),
@@ -114,6 +117,13 @@ const ProductType = () => {
         <h1>Product Types</h1>
         <Breadcrumb menu="Master" active="Product Types" />
       </div>
+
+      <DeleteModal
+        open={showDeleteModal}
+        data={selectedProductType}
+        handleDelete={handleDelete}
+        onClose={() => setSelectedProductType(null)}
+      />
 
       <div
         className="d-flex justify-content-between align-items-center"

@@ -11,6 +11,7 @@ import { FormButton } from "@/modules/components/form-field"
 import { ProductForm } from "./components/product-form"
 import { productsData } from "./components/products"
 import { Search } from "../components/search"
+import { DeleteModal } from "../components/delete-modal"
 
 const Product = () => {
   useDocumentTitle("Products - AMS")
@@ -18,6 +19,7 @@ const Product = () => {
   const navigate = useNavigate()
   const [products, setProducts] = useState<Products[]>()
   const [showModal, setShowModal] = useState<boolean>(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [selectedProduct, setSelectedProduct] = useState<Products | null>(null)
 
   useEffect(() => {
@@ -50,11 +52,9 @@ const Product = () => {
   }
 
   const handleDelete = (productId: number) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      setProducts(
-        products && products.filter((product) => product.id !== productId)
-      )
-    }
+    setProducts(
+      products && products.filter((product) => product.id !== productId)
+    )
   }
 
   const handleSaveUser = (product: Products) => {
@@ -110,7 +110,10 @@ const Product = () => {
             variant="text"
             color="danger"
             icon={<Trash />}
-            onClick={() => handleDelete(product.id)}
+            onClick={() => {
+              setSelectedProduct(product)
+              setShowDeleteModal(true)
+            }}
           />
         </div>
       ),
@@ -123,6 +126,13 @@ const Product = () => {
         <h1>Products</h1>
         <Breadcrumb menu="Master" active="Products" />
       </div>
+
+      <DeleteModal
+        open={showDeleteModal}
+        data={selectedProduct}
+        handleDelete={handleDelete}
+        onClose={() => setSelectedProduct(null)}
+      />
 
       <div
         className="d-flex justify-content-between align-items-center"

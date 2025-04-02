@@ -10,6 +10,7 @@ import { LocationForm } from "./components/location-form"
 import { locationData } from "./components/location"
 import { useNavigate } from "react-router"
 import { Search } from "@/modules/components/search"
+import { DeleteModal } from "@/modules/components/delete-modal"
 
 const Location = () => {
   useDocumentTitle("Locations - AMS")
@@ -17,6 +18,7 @@ const Location = () => {
   const navigate = useNavigate()
   const [location, setLocation] = useState<LocationType[]>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
     null
   )
@@ -61,13 +63,11 @@ const Location = () => {
     setModalVisible(false)
   }
 
-  const handleRemove = (locationId: number) => {
-    if (window.confirm("Are you sure you want to delete this vendor?")) {
-      setLocation(
-        (prevLocation) =>
-          prevLocation && prevLocation.filter((v) => v.id !== locationId)
-      )
-    }
+  const handleDelete = (locationId: number) => {
+    setLocation(
+      location &&
+        location.filter((location: LocationType) => location.id !== locationId)
+    )
   }
 
   const columns: ColumnsType<LocationType> = [
@@ -138,7 +138,10 @@ const Location = () => {
             variant="text"
             icon={<Trash />}
             color="danger"
-            onClick={() => handleRemove(locationData.id)}
+            onClick={() => {
+              setSelectedLocation(locationData)
+              setShowDeleteModal(true)
+            }}
           />
         </div>
       ),
@@ -151,6 +154,13 @@ const Location = () => {
         <h1>Locations</h1>
         <Breadcrumb menu="Master" active="Locations" />
       </div>
+
+      <DeleteModal
+        open={showDeleteModal}
+        data={selectedLocation}
+        handleDelete={handleDelete}
+        onClose={() => setSelectedLocation(null)}
+      />
 
       <div
         className="d-flex justify-content-between align-items-center"

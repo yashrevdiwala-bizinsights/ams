@@ -12,12 +12,15 @@ import { productsData } from "@/modules/products/components/products"
 import { vendorData } from "@/modules/vendors/components/vendor-data"
 import { assetData } from "./components/asset-data"
 import { Search } from "../components/search"
+import { DeleteModal } from "../components/delete-modal"
 
 const Assets = () => {
   useDocumentTitle("Assets - AMS")
 
   const navigate = useNavigate()
   const [assets, setAssets] = useState<AssetType[]>()
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+  const [selectedAsset, setSelectedAsset] = useState<Products | null>(null)
 
   useEffect(() => {
     setAssets(assetData)
@@ -37,9 +40,8 @@ const Assets = () => {
     }
   }
 
-  const handleRemove = (id: number) => {
-    const newAssets = assets?.filter((asset) => asset.id !== id)
-    setAssets(newAssets)
+  const handleDelete = (assetId: number) => {
+    setAssets(assets && assets.filter((asset) => asset.id !== assetId))
   }
 
   const columns: ColumnsType<AssetType> = [
@@ -92,25 +94,28 @@ const Assets = () => {
       title: "Actions",
       key: "actions",
       fixed: "right",
-      render: (_, vendorData) => (
+      render: (_, asset) => (
         <div style={{ display: "flex", gap: 8 }}>
           <FormButton
             variant="text"
             icon={<Eye />}
-            onClick={() => navigate(`/admin/assets/view/${vendorData.id}`)}
+            onClick={() => navigate(`/admin/assets/view/${asset.id}`)}
           />
 
           <FormButton
             variant="text"
             icon={<Pencil />}
-            onClick={() => navigate(`/admin/assets/edit/${vendorData.id}`)}
+            onClick={() => navigate(`/admin/assets/edit/${asset.id}`)}
           />
 
           <FormButton
             variant="text"
             icon={<Trash />}
             color="danger"
-            onClick={() => handleRemove(vendorData.id)}
+            onClick={() => {
+              setSelectedAsset(asset)
+              setShowDeleteModal(true)
+            }}
           />
         </div>
       ),
@@ -123,6 +128,13 @@ const Assets = () => {
         <h1>Assets</h1>
         <Breadcrumb menu="Master" active="Assets" />
       </div>
+
+      <DeleteModal
+        open={showDeleteModal}
+        data={selectedAsset}
+        handleDelete={handleDelete}
+        onClose={() => setSelectedAsset(null)}
+      />
 
       <div
         className="d-flex justify-content-between align-items-center"

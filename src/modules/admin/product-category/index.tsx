@@ -9,12 +9,14 @@ import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { ProductCategoryForm } from "./components/product-category-form"
 import { productsCategoryData } from "./components/product-category"
 import { Search } from "@/modules/components/search"
+import { DeleteModal } from "@/modules/components/delete-modal"
 
 const ProductCategory = () => {
   useDocumentTitle("Product Categories - AMS")
 
   const [productCategory, setProductCategory] = useState<ProductCategory[]>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [selectedProductCat, setSelectedProductCat] =
     useState<ProductCategory | null>(null)
 
@@ -62,13 +64,10 @@ const ProductCategory = () => {
     setModalVisible(false)
   }
 
-  const handleRemove = (locationId: number) => {
-    if (window.confirm("Are you sure you want to delete this vendor?")) {
-      setProductCategory(
-        (prevProductCat) =>
-          prevProductCat && prevProductCat.filter((v) => v.id !== locationId)
-      )
-    }
+  const handleDelete = (productCatId: number) => {
+    setProductCategory(
+      productCategory && productCategory.filter((p) => p.id !== productCatId)
+    )
   }
 
   const columns: ColumnsType<ProductCategory> = [
@@ -108,7 +107,10 @@ const ProductCategory = () => {
             variant="text"
             icon={<Trash />}
             color="danger"
-            onClick={() => handleRemove(productsCategoryData.id)}
+            onClick={() => {
+              setSelectedProductCat(productsCategoryData)
+              setShowDeleteModal(true)
+            }}
           />
         </div>
       ),
@@ -121,6 +123,13 @@ const ProductCategory = () => {
         <h1>Product Categories</h1>
         <Breadcrumb menu="Master" active="Product Categories" />
       </div>
+
+      <DeleteModal
+        open={showDeleteModal}
+        data={selectedProductCat}
+        handleDelete={handleDelete}
+        onClose={() => setSelectedProductCat(null)}
+      />
 
       <div
         className="d-flex justify-content-between align-items-center"

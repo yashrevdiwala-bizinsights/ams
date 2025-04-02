@@ -11,6 +11,7 @@ import { FormButton } from "@/modules/components/form-field"
 import { vendorData } from "./components/vendor-data"
 import { VendorForm } from "./components/vendor-form"
 import { Search } from "../components/search"
+import { DeleteModal } from "../components/delete-modal"
 
 const Vendors = () => {
   useDocumentTitle("Vendors - AMS")
@@ -18,6 +19,7 @@ const Vendors = () => {
   const navigate = useNavigate()
   const [vendors, setVendors] = useState<VendorsType[]>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [selectedVendor, setSelectedVendor] = useState<VendorsType | null>(null)
 
   useEffect(() => {
@@ -29,7 +31,8 @@ const Vendors = () => {
       const filteredVendors = vendors.filter(
         (vendor) =>
           vendor.vendorName?.toLowerCase().includes(value.toLowerCase()) ||
-          vendor.email?.toLowerCase().includes(value.toLowerCase())
+          vendor.email?.toLowerCase().includes(value.toLowerCase()) ||
+          vendor.contactPerson?.toLowerCase().includes(value.toLowerCase())
       )
 
       setVendors(filteredVendors)
@@ -62,13 +65,8 @@ const Vendors = () => {
     setModalVisible(false)
   }
 
-  const handleRemove = (vendorId: number) => {
-    if (window.confirm("Are you sure you want to delete this vendor?")) {
-      setVendors(
-        (prevVendors) =>
-          prevVendors && prevVendors.filter((v) => v.id !== vendorId)
-      )
-    }
+  const handleDelete = (vendorId: number) => {
+    setVendors(vendors && vendors.filter((vendor) => vendor.id !== vendorId))
   }
 
   const columns: ColumnsType<VendorsType> = [
@@ -114,7 +112,10 @@ const Vendors = () => {
             variant="text"
             icon={<Trash />}
             color="danger"
-            onClick={() => handleRemove(vendorData.id)}
+            onClick={() => {
+              setSelectedVendor(vendorData)
+              setShowDeleteModal(true)
+            }}
           />
         </div>
       ),
@@ -127,6 +128,13 @@ const Vendors = () => {
         <h1>Vendors</h1>
         <Breadcrumb menu="Master" active="Vendors" />
       </div>
+
+      <DeleteModal
+        open={showDeleteModal}
+        data={selectedVendor}
+        handleDelete={handleDelete}
+        onClose={() => setSelectedVendor(null)}
+      />
 
       <div
         className="d-flex justify-content-between align-items-center"
