@@ -38,12 +38,21 @@ export const Form = () => {
               <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
                 <div className="d-flex justify-content-center py-4">
                   <div className="logo d-flex align-items-center w-auto">
-                    <img src="assets/img/logo.png" alt="" />
+                    <img src="/favicon.svg" alt="ams-logo" />
+                    <span className="d-none d-lg-block">
+                      AMS
+                    </span>
+                  </div>
+                </div>
+
+                {/* <div className="d-flex justify-content-center align-items-center py-4">
+                  <div className="logo d-flex align-items-center w-auto">
+                    <img src="/favicon.svg" alt="ams-logo" />
                     <span className="d-none d-lg-block">
                       Asset Management System
                     </span>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="card mb-3">
                   <div className="card-body">
@@ -51,9 +60,9 @@ export const Form = () => {
                       <h5 className="card-title fs-4 pb-0 text-center">
                         Log In to Your Account
                       </h5>
-                      <p className="small text-center">
+                      {/* <p className="small text-center">
                         Enter your personal details to log in
-                      </p>
+                      </p> */}
                     </div>
                     <form
                       className="row g-3 needs-validation"
@@ -64,12 +73,12 @@ export const Form = () => {
                           Username
                         </Label>
                         <div className="input-group has-validation">
-                          <span
+                          {/* <span
                             className="input-group-text"
                             id="inputGroupPrepend"
                           >
                             @
-                          </span>
+                          </span> */}
                           <InputField
                             type="text"
                             control={control}

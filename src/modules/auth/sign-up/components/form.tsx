@@ -44,10 +44,8 @@ export const Form = () => {
                     to="/"
                     className="logo d-flex align-items-center w-auto"
                   >
-                    <img src="assets/img/logo.png" alt="" />
-                    <span className="d-none d-lg-block">
-                      Asset Management System
-                    </span>
+                    <img src="/favicon.svg" alt="ams-logo" />
+                    <span className="d-none d-lg-block">AMS</span>
                   </Link>
                 </div>
 
@@ -104,12 +102,12 @@ export const Form = () => {
                           Username
                         </Label>
                         <div className="input-group has-validation">
-                          <span
+                          {/* <span
                             className="input-group-text"
                             id="inputGroupPrepend"
                           >
                             @
-                          </span>
+                          </span> */}
                           <InputField
                             control={control}
                             type="text"
@@ -140,7 +138,7 @@ export const Form = () => {
                           typeof errors.password.message === "string" && (
                             <ErrorMessage errorMsg={errors.password.message} />
                           )}
-                      </div>
+                      </div> 
                       <div className="col-12">
                         <div className="form-check">
                           <InputField
