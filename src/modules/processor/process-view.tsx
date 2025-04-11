@@ -6,32 +6,32 @@ import { BackButton } from "@/modules/components/back-button"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { AppDispatch, RootState } from "@/redux/store"
 import { useEffect } from "react"
-import { fetchLocationById } from "@/redux/slice/locationSlice"
+import { fetchProcessorByID } from "@/redux/slice/processorSlice"
 import { useDispatch, useSelector } from "react-redux"
 
-const LocationView = () => {
-  useDocumentTitle("Location View - AMS")
+const ProcessorView = () => {
+  useDocumentTitle("Processor View - AMS")
 
   const { id } = useParams<{ id: string }>()
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const location = useSelector(
-    (state: RootState) => state.location.locationById
+  const processor = useSelector(
+    (state: RootState) => state.processor.processorById
   )
-  const loading = useSelector((state: RootState) => state.location.loading)
+  const loading = useSelector((state: RootState) => state.processor.loading)
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchLocationById(Number(id)))
+      dispatch(fetchProcessorByID(Number(id)))
     }
   }, [dispatch, id])
 
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1>Locations</h1>
-        <Breadcrumb menu="Master" title="Locations" active="View" />
+        <h1>Processor</h1>
+        <Breadcrumb menu="Master" title="Processor" active="View" />
       </div>
 
       <BackButton />
@@ -49,26 +49,22 @@ const LocationView = () => {
                   }}
                 />
               </span>
-              Location Details
+              Processor Details
             </h5>
             {loading ? (
-              <p className="text-muted p-4">Loading location data...</p>
-            ) : location ? (
+              <p className="text-muted p-4">Loading processor data...</p>
+            ) : processor ? (
               <div className="d-flex align-items-center fw-bold fs-6 text-muted gap-5 p-4">
                 <div className="d-flex flex-column align-items-start justify-content-center gap-3 ms-5">
-                  <span>Location:</span>
-                  <span>Location Code:</span>
-                  <span>Status:</span>
+                  <span>Processor:</span>
                 </div>
 
                 <div className="d-flex flex-column align-items-start justify-content-center gap-3">
-                  <span>{location?.location || "--"}</span>
-                  <span>{location?.locationCode || "--"}</span>
-                  <span>{location?.active || "--"}</span>
+                  <span>{processor?.processor || "--"}</span>
                 </div>
               </div>
             ) : (
-              <p className="text-danger p-4">Location not found</p>
+              <p className="text-danger p-4">Processor not found</p>
             )}
           </div>
         </div>
@@ -77,4 +73,4 @@ const LocationView = () => {
   )
 }
 
-export default LocationView
+export default ProcessorView

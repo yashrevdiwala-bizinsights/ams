@@ -1,31 +1,31 @@
 import { useNavigate } from "react-router"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { LocationType } from "@/types"
+import { SubCat1 } from "@/types"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { BackButton } from "@/modules/components/back-button"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/redux/store"
 import {
-  addLocation,
-  fetchLocationById,
-  resetLocationState,
-  updateLocation,
-} from "@/redux/slice/locationSlice"
+  addSubcat1,
+  fetchSubcat1ByID,
+  resetSubcat1State,
+  updateSubcat1,
+} from "@/redux/slice/subcat1Slice"
 import { FormButton } from "@/modules/components/form-field"
 import { useParams } from "react-router"
 import useDocumentTitle from "@/lib/useDocumentTitle"
 import { Toaster } from "sonner"
 
-export const LocationComponent = () => {
-  useDocumentTitle("Location Form - AMS")
+export const SubCat1FormComponent = () => {
+  useDocumentTitle("Subcat1 Form - AMS")
   const dispatch = useDispatch<AppDispatch>()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
   const isEditMode = Boolean(id)
-  const { loading, success, error, locationById } = useSelector(
-    (state: RootState) => state.location
+  const { loading, success, error, subcat1ById } = useSelector(
+    (state: RootState) => state.subcat1
   )
 
   const {
@@ -33,42 +33,42 @@ export const LocationComponent = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<LocationType>()
+  } = useForm<SubCat1>()
 
   useEffect(() => {
     if (isEditMode && id) {
-      dispatch(fetchLocationById(Number(id)))
+      dispatch(fetchSubcat1ByID(Number(id)))
     }
   }, [dispatch, id, isEditMode])
 
   useEffect(() => {
-    if (isEditMode && locationById) {
-      reset(locationById)
+    if (isEditMode && subcat1ById) {
+      reset(subcat1ById)
     }
-  }, [locationById, reset, isEditMode])
+  }, [subcat1ById, reset, isEditMode])
 
   useEffect(() => {
     if (success) {
-      dispatch(resetLocationState())
-      navigate("/admin/locations/")
+      dispatch(resetSubcat1State())
+      navigate("/admin/subcat1/")
     }
   }, [success, dispatch, navigate])
 
-  const onSubmit = (data: LocationType) => {
+  const onSubmit = (data: SubCat1) => {
     if (isEditMode && id) {
-      dispatch(updateLocation(data))
+      dispatch(updateSubcat1(data))
     } else {
-      dispatch(addLocation(data))
+      dispatch(addSubcat1(data))
     }
   }
 
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1 className="h3">{isEditMode ? "Edit" : "Add New"} Location</h1>
+        <h1 className="h3">{isEditMode ? "Edit" : "Add New"} Subcat1</h1>
         <Breadcrumb
           menu="Master"
-          title="Locations"
+          title="Subcat1"
           active={isEditMode ? "Edit" : "Add"}
         />
       </div>
@@ -78,7 +78,7 @@ export const LocationComponent = () => {
       <div className="card shadow-sm">
         <div className="card-body">
           <h5 className="card-title">
-            {isEditMode ? "Edit Location" : "Add Location"}
+            {isEditMode ? "Edit Subcat1" : "Add Subcat1"}
           </h5>
 
           {error && (
@@ -90,42 +90,43 @@ export const LocationComponent = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row g-3">
               <div className="col-md-6">
-                <label className="form-label">Location</label>
+                <label className="form-label">MajorCat</label>
                 <input
                   className="form-control"
-                  {...register("location", { required: true })}
-                  placeholder="Location"
+                  {...register("majorCat", { required: true })}
+                  placeholder="majorCat"
                 />
-                {errors.location && (
-                  <div className="text-danger mt-1">Location is required</div>
+                {errors.majorCat && (
+                  <div className="text-danger mt-1">MajorCat is required</div>
                 )}
               </div>
+            </div>
 
+            <div className="row g-3">
               <div className="col-md-6">
-                <label className="form-label">Location Code</label>
+                <label className="form-label">Subcat1</label>
                 <input
                   className="form-control"
-                  {...register("locationCode", { required: true })}
-                  placeholder="Location Code"
+                  {...register("subCat1", { required: true })}
+                  placeholder="subCat1"
                 />
-                {errors.locationCode && (
-                  <div className="text-danger mt-1">
-                    Location Code is required
-                  </div>
+                {errors.subCat1 && (
+                  <div className="text-danger mt-1">Subcat1 is required</div>
                 )}
               </div>
+            </div>
 
+            <div className="row g-3">
               <div className="col-md-6">
-                <label className="form-label">Status</label>
-                <div className="form-check form-switch">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    {...register("active")}
-                    defaultChecked={locationById?.active}
-                  />
-                  <label className="form-check-label">Active / Inactive</label>
-                </div>
+                <label className="form-label">Abbr</label>
+                <input
+                  className="form-control"
+                  {...register("abbr", { required: true })}
+                  placeholder="abbr"
+                />
+                {errors.abbr && (
+                  <div className="text-danger mt-1">Abbr is required</div>
+                )}
               </div>
             </div>
 
@@ -152,4 +153,4 @@ export const LocationComponent = () => {
   )
 }
 
-export default LocationComponent
+export default SubCat1FormComponent

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { Switch, Table } from "antd"
+import { Table } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
@@ -8,87 +8,120 @@ import useDocumentTitle from "@/lib/useDocumentTitle"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { ExcelDownload } from "@/modules/components/excel-download"
 import { FormButton } from "@/modules/components/form-field"
-import { productsData } from "@/modules/products/components/products"
-import { vendorData } from "@/modules/vendors/components/vendor-data"
-import { assetData } from "./components/asset-data"
 import { Search } from "../components/search"
 import { DeleteModal } from "../components/delete-modal"
 
-const Assets = () => {
+import { useDispatch, useSelector } from "react-redux"
+import { deleteAsset, fetchAsset } from "@/redux/slice/assetSlice"
+import type { RootState, AppDispatch } from "@/redux/store"
+import { Assets } from "@/types"
+
+const AssetsPage = () => {
   useDocumentTitle("Assets - AMS")
 
+  const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()
-  const [assets, setAssets] = useState<AssetType[]>()
+  const [filteredAssets, setFilteredAssets] = useState<Assets[] | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-  const [selectedAsset, setSelectedAsset] = useState<Products | null>(null)
+  const [selectedAsset, setSelectedAsset] = useState<Assets | null>(null)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+
+  const {
+    data: assets,
+    loading,
+    total,
+  } = useSelector(
+    (state: RootState) =>
+      state.asset as {
+        data: Assets[] | null
+        loading: boolean
+        total: number
+      }
+  )
 
   useEffect(() => {
-    setAssets(assetData)
-  }, [])
+    dispatch(fetchAsset({ page, limit, search: "" }))
+  }, [dispatch, page, limit])
+
+  useEffect(() => {
+    setFilteredAssets(assets)
+  }, [assets])
 
   const handleSearch = (value: string) => {
     if (value && assets) {
-      const filteredAssets = assets.filter(
+      const filtered = assets.filter(
         (asset) =>
-          asset.assetName?.toLowerCase().includes(value.toLowerCase()) ||
-          asset.vendorId?.toLowerCase().includes(value.toLowerCase())
+          asset.assetId?.toLowerCase().includes(value.toLowerCase()) ||
+          asset.manufacturer?.toLowerCase().includes(value.toLowerCase())
       )
-
-      setAssets(filteredAssets)
+      setFilteredAssets(filtered)
     } else {
-      setAssets(assetData)
+      setFilteredAssets(assets)
     }
   }
 
   const handleDelete = (assetId: number) => {
-    setAssets(assets && assets.filter((asset) => asset.id !== assetId))
+    dispatch(deleteAsset(assetId))
+      .unwrap()
+      .then(() => {
+        // Option 1: Just refetch everything to be safe
+        dispatch(fetchAsset({ page, limit, search: "" }))
+
+        // Option 2: Or manually remove it from local state if you prefer
+        const updated =
+          filteredAssets?.filter((asset) => asset.id !== assetId) || []
+        setFilteredAssets(updated)
+      })
+      .catch((err) => {
+        console.error("Delete failed:", err)
+      })
   }
 
-  const columns: ColumnsType<AssetType> = [
-    { title: "ID", dataIndex: "id", key: "id", fixed: "left" },
-    { title: "Asset Name", dataIndex: "assetName", key: "assetName" },
-    { title: "Serial No.", dataIndex: "serialNumber", key: "serialNumber" },
+  const columns: ColumnsType<Assets> = [
+    { title: "Asset ID", dataIndex: "assetId", key: "assetId" },
     {
-      title: "Product",
-      dataIndex: "productId",
-      key: "productId",
-      render: (productId: string) => {
-        const product = productsData.find((p) => p.id === Number(productId))
-        return product?.productName
-      },
+      title: "Fixed Asset No.",
+      dataIndex: "fixedAssetNo",
+      key: "fixedAssetNo",
     },
     {
-      title: "Product Type",
-      dataIndex: "productId",
-      key: "productId",
-      render: (productId: string) => {
-        const product = productsData.find((p) => p.id === Number(productId))
-        return product?.productType
-      },
+      title: "Category",
+      key: "category",
+      render: (_, record) =>
+        [record.subCat1, record.subCat2, record.subCat3]
+          .filter(Boolean)
+          .join(" / "),
     },
     {
-      title: "Product Category",
-      dataIndex: "productId",
-      key: "productId",
-      render: (productId: string) => {
-        const product = productsData.find((p) => p.id === Number(productId))
-        return product?.productCategory
-      },
+      title: "Description",
+      key: "description",
+      render: (_, record) =>
+        [record.descr, record.model, record.OS].filter(Boolean).join(", "),
+    },
+    { title: "Manufacturer", dataIndex: "manufacturer", key: "manufacturer" },
+    {
+      title: "Status / Serial No",
+      key: "statusSerial",
+      render: (_, record) =>
+        [record.status, record.sr].filter(Boolean).join(", "),
     },
     {
-      title: "Vendor",
-      dataIndex: "vendorId",
-      key: "vendorId",
-      render: (vendorId: string) => {
-        const product = vendorData.find((p) => p.id === Number(vendorId))
-        return product?.vendorName
-      },
+      title: "Physical RFID",
+      dataIndex: "physicalRfid",
+      key: "physicalRfid",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status: boolean) => <Switch defaultChecked={status} />,
+      title: "Assign Info",
+      key: "assignInfo",
+      render: (_, record) =>
+        [record.assignType, record.assignBasis].filter(Boolean).join(", "),
+    },
+    {
+      title: "Location",
+      key: "location",
+      render: (_, record) =>
+        [record.location, record.subLocation].filter(Boolean).join(", "),
     },
     {
       title: "Actions",
@@ -101,13 +134,11 @@ const Assets = () => {
             icon={<Eye />}
             onClick={() => navigate(`/admin/assets/view/${asset.id}`)}
           />
-
           <FormButton
             variant="text"
             icon={<Pencil />}
             onClick={() => navigate(`/admin/assets/edit/${asset.id}`)}
           />
-
           <FormButton
             variant="text"
             icon={<Trash />}
@@ -132,8 +163,14 @@ const Assets = () => {
       <DeleteModal
         open={showDeleteModal}
         data={selectedAsset}
-        handleDelete={handleDelete}
-        onClose={() => setSelectedAsset(null)}
+        handleDelete={() => {
+          if (selectedAsset?.id) {
+            handleDelete(selectedAsset.id)
+            setShowDeleteModal(false)
+            setSelectedAsset(null)
+          }
+        }}
+        onClose={() => setShowDeleteModal(false)}
       />
 
       <div
@@ -149,24 +186,34 @@ const Assets = () => {
         </FormButton>
 
         <div className="d-flex align-items-center gap-2">
-          {assets && assets.length > 0 && (
-            <ExcelDownload data={assets} sheetName="assets" />
+          {filteredAssets && filteredAssets.length > 0 && (
+            <ExcelDownload data={filteredAssets} sheetName="Assets" />
           )}
-
           <Search handleSearch={handleSearch} />
         </div>
       </div>
 
       <Table
         columns={columns}
-        dataSource={assets}
-        rowKey="id"
+        loading={loading}
+        dataSource={filteredAssets || []}
+        rowKey="assetID"
         pagination={{
+          current: page,
+          pageSize: limit,
+          total: total || 0,
+          showSizeChanger: true,
+          onChange: (newPage, newPageSize) => {
+            setPage(newPage)
+            setLimit(newPageSize)
+          },
           showTotal: (total, range) =>
             `${range[0]}-${range[1]} of ${total} entries`,
         }}
+        scroll={{ x: 1500 }}
       />
     </main>
   )
 }
-export default Assets
+
+export default AssetsPage

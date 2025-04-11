@@ -6,32 +6,30 @@ import { BackButton } from "@/modules/components/back-button"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { AppDispatch, RootState } from "@/redux/store"
 import { useEffect } from "react"
-import { fetchLocationById } from "@/redux/slice/locationSlice"
+import { fetchModelsByID } from "@/redux/slice/modelsSlice"
 import { useDispatch, useSelector } from "react-redux"
 
-const LocationView = () => {
-  useDocumentTitle("Location View - AMS")
+const ModelView = () => {
+  useDocumentTitle("Models View - AMS")
 
   const { id } = useParams<{ id: string }>()
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const location = useSelector(
-    (state: RootState) => state.location.locationById
-  )
-  const loading = useSelector((state: RootState) => state.location.loading)
+  const models = useSelector((state: RootState) => state.models.modelsById)
+  const loading = useSelector((state: RootState) => state.models.loading)
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchLocationById(Number(id)))
+      dispatch(fetchModelsByID(Number(id)))
     }
   }, [dispatch, id])
 
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1>Locations</h1>
-        <Breadcrumb menu="Master" title="Locations" active="View" />
+        <h1>Models</h1>
+        <Breadcrumb menu="Master" title="Models" active="View" />
       </div>
 
       <BackButton />
@@ -49,26 +47,36 @@ const LocationView = () => {
                   }}
                 />
               </span>
-              Location Details
+              Models Details
             </h5>
             {loading ? (
-              <p className="text-muted p-4">Loading location data...</p>
-            ) : location ? (
+              <p className="text-muted p-4">Loading models data...</p>
+            ) : models ? (
               <div className="d-flex align-items-center fw-bold fs-6 text-muted gap-5 p-4">
                 <div className="d-flex flex-column align-items-start justify-content-center gap-3 ms-5">
-                  <span>Location:</span>
-                  <span>Location Code:</span>
-                  <span>Status:</span>
+                  <span>Model:</span>
+                  <span>Category:</span>
+                  <span>Make:</span>
+                  <span>MajorCat:</span>
                 </div>
 
                 <div className="d-flex flex-column align-items-start justify-content-center gap-3">
-                  <span>{location?.location || "--"}</span>
-                  <span>{location?.locationCode || "--"}</span>
-                  <span>{location?.active || "--"}</span>
+                  <span>{models?.model || "--"}</span>
+                  <span>
+                    {typeof models.category === "object"
+                      ? models.category.subCat1
+                      : models.category || "--"}
+                  </span>
+                  <span>
+                    {typeof models.make === "object"
+                      ? models.make.manfact
+                      : models.make || "--"}
+                  </span>
+                  <span>{models?.majorCategory || "--"}</span>
                 </div>
               </div>
             ) : (
-              <p className="text-danger p-4">Location not found</p>
+              <p className="text-danger p-4">Models not found</p>
             )}
           </div>
         </div>
@@ -77,4 +85,4 @@ const LocationView = () => {
   )
 }
 
-export default LocationView
+export default ModelView

@@ -1,31 +1,31 @@
 import { useNavigate } from "react-router"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { LocationType } from "@/types"
+import { OSType } from "@/types"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { BackButton } from "@/modules/components/back-button"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/redux/store"
 import {
-  addLocation,
-  fetchLocationById,
-  resetLocationState,
-  updateLocation,
-} from "@/redux/slice/locationSlice"
+  addOS,
+  fetchOSByID,
+  resetOsState,
+  updateOS,
+} from "@/redux/slice/osSlice"
 import { FormButton } from "@/modules/components/form-field"
 import { useParams } from "react-router"
 import useDocumentTitle from "@/lib/useDocumentTitle"
 import { Toaster } from "sonner"
 
-export const LocationComponent = () => {
-  useDocumentTitle("Location Form - AMS")
+export const OSFormComponent = () => {
+  useDocumentTitle("OS Form - AMS")
   const dispatch = useDispatch<AppDispatch>()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
   const isEditMode = Boolean(id)
-  const { loading, success, error, locationById } = useSelector(
-    (state: RootState) => state.location
+  const { loading, success, error, osById } = useSelector(
+    (state: RootState) => state.os
   )
 
   const {
@@ -33,42 +33,42 @@ export const LocationComponent = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<LocationType>()
+  } = useForm<OSType>()
 
   useEffect(() => {
     if (isEditMode && id) {
-      dispatch(fetchLocationById(Number(id)))
+      dispatch(fetchOSByID(Number(id)))
     }
   }, [dispatch, id, isEditMode])
 
   useEffect(() => {
-    if (isEditMode && locationById) {
-      reset(locationById)
+    if (isEditMode && osById) {
+      reset(osById)
     }
-  }, [locationById, reset, isEditMode])
+  }, [osById, reset, isEditMode])
 
   useEffect(() => {
     if (success) {
-      dispatch(resetLocationState())
-      navigate("/admin/locations/")
+      dispatch(resetOsState())
+      navigate("/admin/os/")
     }
   }, [success, dispatch, navigate])
 
-  const onSubmit = (data: LocationType) => {
+  const onSubmit = (data: OSType) => {
     if (isEditMode && id) {
-      dispatch(updateLocation(data))
+      dispatch(updateOS(data))
     } else {
-      dispatch(addLocation(data))
+      dispatch(addOS(data))
     }
   }
 
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1 className="h3">{isEditMode ? "Edit" : "Add New"} Location</h1>
+        <h1 className="h3">{isEditMode ? "Edit" : "Add New"} OS</h1>
         <Breadcrumb
           menu="Master"
-          title="Locations"
+          title="OS"
           active={isEditMode ? "Edit" : "Add"}
         />
       </div>
@@ -77,9 +77,7 @@ export const LocationComponent = () => {
 
       <div className="card shadow-sm">
         <div className="card-body">
-          <h5 className="card-title">
-            {isEditMode ? "Edit Location" : "Add Location"}
-          </h5>
+          <h5 className="card-title">{isEditMode ? "Edit OS" : "Add OS"}</h5>
 
           {error && (
             <div className="alert alert-danger" role="alert">
@@ -90,42 +88,15 @@ export const LocationComponent = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row g-3">
               <div className="col-md-6">
-                <label className="form-label">Location</label>
+                <label className="form-label">OS</label>
                 <input
                   className="form-control"
-                  {...register("location", { required: true })}
-                  placeholder="Location"
+                  {...register("OS", { required: true })}
+                  placeholder="OS"
                 />
-                {errors.location && (
-                  <div className="text-danger mt-1">Location is required</div>
+                {errors.OS && (
+                  <div className="text-danger mt-1">OS is required</div>
                 )}
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label">Location Code</label>
-                <input
-                  className="form-control"
-                  {...register("locationCode", { required: true })}
-                  placeholder="Location Code"
-                />
-                {errors.locationCode && (
-                  <div className="text-danger mt-1">
-                    Location Code is required
-                  </div>
-                )}
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label">Status</label>
-                <div className="form-check form-switch">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    {...register("active")}
-                    defaultChecked={locationById?.active}
-                  />
-                  <label className="form-check-label">Active / Inactive</label>
-                </div>
               </div>
             </div>
 
@@ -152,4 +123,4 @@ export const LocationComponent = () => {
   )
 }
 
-export default LocationComponent
+export default OSFormComponent

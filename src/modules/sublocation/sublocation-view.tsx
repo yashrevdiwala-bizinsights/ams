@@ -6,32 +6,32 @@ import { BackButton } from "@/modules/components/back-button"
 import { Breadcrumb } from "@/modules/components/breadcrumb"
 import { AppDispatch, RootState } from "@/redux/store"
 import { useEffect } from "react"
-import { fetchLocationById } from "@/redux/slice/locationSlice"
+import { fetchSubLocationById } from "@/redux/slice/sublocationSlice"
 import { useDispatch, useSelector } from "react-redux"
 
-const LocationView = () => {
-  useDocumentTitle("Location View - AMS")
+const SubLocationView = () => {
+  useDocumentTitle("SubLocation View - AMS")
 
   const { id } = useParams<{ id: string }>()
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const location = useSelector(
-    (state: RootState) => state.location.locationById
+  const sublocation = useSelector(
+    (state: RootState) => state.sublocation.sublocationById
   )
-  const loading = useSelector((state: RootState) => state.location.loading)
+  const loading = useSelector((state: RootState) => state.sublocation.loading)
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchLocationById(Number(id)))
+      dispatch(fetchSubLocationById(Number(id)))
     }
   }, [dispatch, id])
 
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1>Locations</h1>
-        <Breadcrumb menu="Master" title="Locations" active="View" />
+        <h1>SubLocations</h1>
+        <Breadcrumb menu="Master" title="SubLocations" active="View" />
       </div>
 
       <BackButton />
@@ -49,22 +49,30 @@ const LocationView = () => {
                   }}
                 />
               </span>
-              Location Details
+              SubLocation Details
             </h5>
             {loading ? (
-              <p className="text-muted p-4">Loading location data...</p>
-            ) : location ? (
+              <p className="text-muted p-4">Loading sublocation data...</p>
+            ) : sublocation ? (
               <div className="d-flex align-items-center fw-bold fs-6 text-muted gap-5 p-4">
                 <div className="d-flex flex-column align-items-start justify-content-center gap-3 ms-5">
+                  <span>Work Center:</span>
                   <span>Location:</span>
-                  <span>Location Code:</span>
-                  <span>Status:</span>
+                  <span>Sub Location:</span>
                 </div>
 
                 <div className="d-flex flex-column align-items-start justify-content-center gap-3">
-                  <span>{location?.location || "--"}</span>
-                  <span>{location?.locationCode || "--"}</span>
-                  <span>{location?.active || "--"}</span>
+                  <span>
+                    {typeof sublocation.workCenter === "object"
+                      ? sublocation.workCenter.locationCode
+                      : sublocation.workCenter || "--"}
+                  </span>
+                  <span>
+                    {typeof sublocation.location === "object"
+                      ? sublocation.location.location
+                      : sublocation.location || "--"}
+                  </span>
+                  <span>{sublocation?.subLocation || "--"}</span>
                 </div>
               </div>
             ) : (
@@ -77,4 +85,4 @@ const LocationView = () => {
   )
 }
 
-export default LocationView
+export default SubLocationView

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { Switch, Table } from "antd"
+import { Table } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
@@ -12,64 +12,64 @@ import { Search } from "@/modules/components/search"
 import { DeleteModal } from "@/modules/components/delete-modal"
 
 import { useDispatch, useSelector } from "react-redux"
-import { deleteLocation, fetchLocation } from "@/redux/slice/locationSlice"
+import { deleteModels, fetchModels } from "@/redux/slice/modelsSlice"
 import type { RootState, AppDispatch } from "@/redux/store"
-import { LocationType } from "@/types"
+import { Models } from "@/types"
 
-const LocationPage = () => {
-  useDocumentTitle("Locations - AMS")
+const ModelsPage = () => {
+  useDocumentTitle("Models - AMS")
 
   const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()
-  const [filteredLocations, setFilteredLocations] = useState<
-    LocationType[] | null
-  >(null)
+  const [filteredModels, setFilteredModels] = useState<Models[] | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
-    null
-  )
+  const [selectedModels, setSelectedModels] = useState<Models | null>(null)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
 
   const { data, loading, total } = useSelector(
-    (state: RootState) => state.location
+    (state: RootState) => state.models
   )
 
   useEffect(() => {
-    dispatch(fetchLocation({ page, limit, search: "" }))
+    dispatch(fetchModels({ page, limit, search: "" }))
   }, [dispatch, page, limit])
 
   useEffect(() => {
-    setFilteredLocations(data)
+    setFilteredModels(data)
   }, [data])
 
   const handleSearch = (value: string) => {
     if (value && data) {
-      const filtered = data.filter((x: { location: string }) =>
-        x.location?.toLowerCase().includes(value.toLowerCase())
+      const filtered = data.filter(
+        (x: { models: string; category: string; make: string }) =>
+          x.models?.toLowerCase().includes(value.toLowerCase()) ||
+          x.category?.toLowerCase().includes(value.toLowerCase()) ||
+          x.make?.toLowerCase().includes(value.toLowerCase())
       )
-      setFilteredLocations(filtered)
+      setFilteredModels(filtered)
     } else {
-      setFilteredLocations(data)
+      setFilteredModels(data)
     }
   }
 
   const handleDelete = (id: number) => {
-    dispatch(deleteLocation(id))
+    dispatch(deleteModels(id))
       .unwrap()
       .then(() => {
         // Option 1: Just refetch everything to be safe
-        dispatch(fetchLocation({ page, limit, search: "" }))
+        dispatch(fetchModels({ page, limit, search: "" }))
 
         // Option 2: Or manually remove it from local state if you prefer
-        const updated = filteredLocations?.filter((x) => x.id !== id) || []
-        setFilteredLocations(updated)
+        const updated = filteredModels?.filter((x) => x.id !== id) || []
+        setFilteredModels(updated)
       })
       .catch((err) => {
         console.error("Delete failed:", err)
       })
   }
-  const columns: ColumnsType<LocationType> = [
+
+  const columns: ColumnsType<Models> = [
     {
       title: "ID",
       dataIndex: "id",
@@ -80,20 +80,24 @@ const LocationPage = () => {
       },
     },
     {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
+      title: "Models",
+      dataIndex: "model",
+      key: "model",
     },
     {
-      title: "Location Code",
-      dataIndex: "locationCode",
-      key: "locationCode",
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
     },
     {
-      title: "Status",
-      dataIndex: "active",
-      key: "active",
-      render: (active: boolean) => <Switch defaultChecked={active} />,
+      title: "Make",
+      dataIndex: "make",
+      key: "make",
+    },
+    {
+      title: "Major Category",
+      dataIndex: "majorCategory",
+      key: "majorCategory",
     },
     {
       title: "Actions",
@@ -104,19 +108,19 @@ const LocationPage = () => {
           <FormButton
             variant="text"
             icon={<Eye />}
-            onClick={() => navigate(`/admin/locations/view/${item.id}`)}
+            onClick={() => navigate(`/admin/models/view/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Pencil />}
-            onClick={() => navigate(`/admin/locations/edit/${item.id}`)}
+            onClick={() => navigate(`/admin/models/edit/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Trash />}
             color="danger"
             onClick={() => {
-              setSelectedLocation(item)
+              setSelectedModels(item)
               setShowDeleteModal(true)
             }}
           />
@@ -128,18 +132,18 @@ const LocationPage = () => {
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1>Locations</h1>
-        <Breadcrumb menu="Master" active="Locations" />
+        <h1>Models</h1>
+        <Breadcrumb menu="Master" active="Models" />
       </div>
 
       <DeleteModal
         open={showDeleteModal}
-        data={selectedLocation}
+        data={selectedModels}
         handleDelete={() => {
-          if (selectedLocation?.id) {
-            handleDelete(selectedLocation.id)
+          if (selectedModels?.id) {
+            handleDelete(selectedModels.id)
             setShowDeleteModal(false)
-            setSelectedLocation(null)
+            setFilteredModels(null)
           }
         }}
         onClose={() => setShowDeleteModal(false)}
@@ -152,14 +156,14 @@ const LocationPage = () => {
         <FormButton
           color="primary"
           icon={<Plus />}
-          onClick={() => navigate("/admin/locations/add")}
+          onClick={() => navigate("/admin/models/add")}
         >
-          Add Location
+          Add Models
         </FormButton>
 
         <div className="d-flex align-items-center gap-2">
-          {filteredLocations && filteredLocations.length > 0 && (
-            <ExcelDownload data={filteredLocations} sheetName="Location" />
+          {filteredModels && filteredModels.length > 0 && (
+            <ExcelDownload data={filteredModels} sheetName="Models" />
           )}
           <Search handleSearch={handleSearch} />
         </div>
@@ -168,7 +172,7 @@ const LocationPage = () => {
       <Table
         columns={columns}
         loading={loading}
-        dataSource={filteredLocations || []}
+        dataSource={filteredModels || []}
         rowKey="id"
         pagination={{
           current: page,
@@ -188,4 +192,4 @@ const LocationPage = () => {
   )
 }
 
-export default LocationPage
+export default ModelsPage

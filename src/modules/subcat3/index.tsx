@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { Switch, Table } from "antd"
+import { Table } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
@@ -12,64 +12,63 @@ import { Search } from "@/modules/components/search"
 import { DeleteModal } from "@/modules/components/delete-modal"
 
 import { useDispatch, useSelector } from "react-redux"
-import { deleteLocation, fetchLocation } from "@/redux/slice/locationSlice"
+import { deleteSubcat3, fetchSubcat3 } from "@/redux/slice/subcat3Slice"
 import type { RootState, AppDispatch } from "@/redux/store"
-import { LocationType } from "@/types"
+import { SubCat3 } from "@/types"
 
-const LocationPage = () => {
-  useDocumentTitle("Locations - AMS")
+const Subcat3Page = () => {
+  useDocumentTitle("Subcat3 - AMS")
 
   const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()
-  const [filteredLocations, setFilteredLocations] = useState<
-    LocationType[] | null
-  >(null)
+  const [filteredSubcat3, setFilteredSubcat3] = useState<SubCat3[] | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
-    null
-  )
+  const [selectedSubcat3, setSelectedSubcat3] = useState<SubCat3 | null>(null)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
 
   const { data, loading, total } = useSelector(
-    (state: RootState) => state.location
+    (state: RootState) => state.subcat3
   )
 
   useEffect(() => {
-    dispatch(fetchLocation({ page, limit, search: "" }))
+    dispatch(fetchSubcat3({ page, limit, search: "" }))
   }, [dispatch, page, limit])
 
   useEffect(() => {
-    setFilteredLocations(data)
+    setFilteredSubcat3(data)
   }, [data])
 
   const handleSearch = (value: string) => {
     if (value && data) {
-      const filtered = data.filter((x: { location: string }) =>
-        x.location?.toLowerCase().includes(value.toLowerCase())
+      const filtered = data.filter(
+        (x: { subCat1: string; subCat2: string; subCat3: string }) =>
+          x.subCat3?.toLowerCase().includes(value.toLowerCase()) ||
+          x.subCat2?.toLowerCase().includes(value.toLowerCase()) ||
+          x.subCat1?.toLowerCase().includes(value.toLowerCase())
       )
-      setFilteredLocations(filtered)
+      setFilteredSubcat3(filtered)
     } else {
-      setFilteredLocations(data)
+      setFilteredSubcat3(data)
     }
   }
 
   const handleDelete = (id: number) => {
-    dispatch(deleteLocation(id))
+    dispatch(deleteSubcat3(id))
       .unwrap()
       .then(() => {
         // Option 1: Just refetch everything to be safe
-        dispatch(fetchLocation({ page, limit, search: "" }))
+        dispatch(fetchSubcat3({ page, limit, search: "" }))
 
         // Option 2: Or manually remove it from local state if you prefer
-        const updated = filteredLocations?.filter((x) => x.id !== id) || []
-        setFilteredLocations(updated)
+        const updated = filteredSubcat3?.filter((x) => x.id !== id) || []
+        setFilteredSubcat3(updated)
       })
       .catch((err) => {
         console.error("Delete failed:", err)
       })
   }
-  const columns: ColumnsType<LocationType> = [
+  const columns: ColumnsType<SubCat3> = [
     {
       title: "ID",
       dataIndex: "id",
@@ -80,20 +79,19 @@ const LocationPage = () => {
       },
     },
     {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
+      title: "SubCat1",
+      dataIndex: "subCat1",
+      key: "subCat1",
     },
     {
-      title: "Location Code",
-      dataIndex: "locationCode",
-      key: "locationCode",
+      title: "SubCat2",
+      dataIndex: "subCat2",
+      key: "subCat2",
     },
     {
-      title: "Status",
-      dataIndex: "active",
-      key: "active",
-      render: (active: boolean) => <Switch defaultChecked={active} />,
+      title: "SubCat3",
+      dataIndex: "subCat3",
+      key: "subCat3",
     },
     {
       title: "Actions",
@@ -104,19 +102,19 @@ const LocationPage = () => {
           <FormButton
             variant="text"
             icon={<Eye />}
-            onClick={() => navigate(`/admin/locations/view/${item.id}`)}
+            onClick={() => navigate(`/admin/subcat3/view/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Pencil />}
-            onClick={() => navigate(`/admin/locations/edit/${item.id}`)}
+            onClick={() => navigate(`/admin/subcat3/edit/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Trash />}
             color="danger"
             onClick={() => {
-              setSelectedLocation(item)
+              setSelectedSubcat3(item)
               setShowDeleteModal(true)
             }}
           />
@@ -128,18 +126,18 @@ const LocationPage = () => {
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1>Locations</h1>
-        <Breadcrumb menu="Master" active="Locations" />
+        <h1>Subcat3</h1>
+        <Breadcrumb menu="Master" active="Subcat3" />
       </div>
 
       <DeleteModal
         open={showDeleteModal}
-        data={selectedLocation}
+        data={selectedSubcat3}
         handleDelete={() => {
-          if (selectedLocation?.id) {
-            handleDelete(selectedLocation.id)
+          if (selectedSubcat3?.id) {
+            handleDelete(selectedSubcat3.id)
             setShowDeleteModal(false)
-            setSelectedLocation(null)
+            setSelectedSubcat3(null)
           }
         }}
         onClose={() => setShowDeleteModal(false)}
@@ -152,14 +150,14 @@ const LocationPage = () => {
         <FormButton
           color="primary"
           icon={<Plus />}
-          onClick={() => navigate("/admin/locations/add")}
+          onClick={() => navigate("/admin/subcat3/add")}
         >
-          Add Location
+          Add Subcat3
         </FormButton>
 
         <div className="d-flex align-items-center gap-2">
-          {filteredLocations && filteredLocations.length > 0 && (
-            <ExcelDownload data={filteredLocations} sheetName="Location" />
+          {filteredSubcat3 && filteredSubcat3.length > 0 && (
+            <ExcelDownload data={filteredSubcat3} sheetName="Subcat3" />
           )}
           <Search handleSearch={handleSearch} />
         </div>
@@ -168,7 +166,7 @@ const LocationPage = () => {
       <Table
         columns={columns}
         loading={loading}
-        dataSource={filteredLocations || []}
+        dataSource={filteredSubcat3 || []}
         rowKey="id"
         pagination={{
           current: page,
@@ -188,4 +186,4 @@ const LocationPage = () => {
   )
 }
 
-export default LocationPage
+export default Subcat3Page

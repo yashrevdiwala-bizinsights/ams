@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { Switch, Table } from "antd"
+import { Table } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
@@ -12,64 +12,70 @@ import { Search } from "@/modules/components/search"
 import { DeleteModal } from "@/modules/components/delete-modal"
 
 import { useDispatch, useSelector } from "react-redux"
-import { deleteLocation, fetchLocation } from "@/redux/slice/locationSlice"
+import {
+  deleteSubLocation,
+  fetchSubLocation,
+} from "@/redux/slice/sublocationSlice"
 import type { RootState, AppDispatch } from "@/redux/store"
-import { LocationType } from "@/types"
+import { SubLocation } from "@/types"
 
-const LocationPage = () => {
-  useDocumentTitle("Locations - AMS")
+const SubLocationPage = () => {
+  useDocumentTitle("SubLocations - AMS")
 
   const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()
-  const [filteredLocations, setFilteredLocations] = useState<
-    LocationType[] | null
+  const [filteredSubLocations, setFilteredSubLocations] = useState<
+    SubLocation[] | null
   >(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
-    null
-  )
+  const [selectedSubLocation, setSelectedSubLocation] =
+    useState<SubLocation | null>(null)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
 
   const { data, loading, total } = useSelector(
-    (state: RootState) => state.location
+    (state: RootState) => state.sublocation
   )
 
   useEffect(() => {
-    dispatch(fetchLocation({ page, limit, search: "" }))
+    dispatch(fetchSubLocation({ page, limit, search: "" }))
   }, [dispatch, page, limit])
 
   useEffect(() => {
-    setFilteredLocations(data)
+    setFilteredSubLocations(data)
   }, [data])
 
   const handleSearch = (value: string) => {
     if (value && data) {
-      const filtered = data.filter((x: { location: string }) =>
-        x.location?.toLowerCase().includes(value.toLowerCase())
+      const filtered = data.filter(
+        (x: { workCenter: string; location: string; subLocation: string }) =>
+          x.subLocation?.toLowerCase().includes(value.toLowerCase()) ||
+          x.workCenter?.toLowerCase().includes(value.toLowerCase()) ||
+          x.location?.toLowerCase().includes(value.toLowerCase())
       )
-      setFilteredLocations(filtered)
+      setFilteredSubLocations(filtered)
     } else {
-      setFilteredLocations(data)
+      setFilteredSubLocations(data)
     }
   }
 
   const handleDelete = (id: number) => {
-    dispatch(deleteLocation(id))
+    dispatch(deleteSubLocation(id))
       .unwrap()
       .then(() => {
         // Option 1: Just refetch everything to be safe
-        dispatch(fetchLocation({ page, limit, search: "" }))
+        dispatch(fetchSubLocation({ page, limit, search: "" }))
 
         // Option 2: Or manually remove it from local state if you prefer
-        const updated = filteredLocations?.filter((x) => x.id !== id) || []
-        setFilteredLocations(updated)
+        const updated = filteredSubLocations?.filter((x) => x.id !== id) || []
+        setFilteredSubLocations(updated)
       })
       .catch((err) => {
         console.error("Delete failed:", err)
       })
   }
-  const columns: ColumnsType<LocationType> = [
+
+  const columns: ColumnsType<SubLocation> = [
     {
       title: "ID",
       dataIndex: "id",
@@ -80,20 +86,19 @@ const LocationPage = () => {
       },
     },
     {
+      title: "WorkCneter",
+      dataIndex: "workCenter",
+      key: "workCenter",
+    },
+    {
       title: "Location",
       dataIndex: "location",
       key: "location",
     },
     {
-      title: "Location Code",
-      dataIndex: "locationCode",
-      key: "locationCode",
-    },
-    {
-      title: "Status",
-      dataIndex: "active",
-      key: "active",
-      render: (active: boolean) => <Switch defaultChecked={active} />,
+      title: "SubLocation",
+      dataIndex: "subLocation",
+      key: "subLocation",
     },
     {
       title: "Actions",
@@ -104,19 +109,19 @@ const LocationPage = () => {
           <FormButton
             variant="text"
             icon={<Eye />}
-            onClick={() => navigate(`/admin/locations/view/${item.id}`)}
+            onClick={() => navigate(`/admin/sublocations/view/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Pencil />}
-            onClick={() => navigate(`/admin/locations/edit/${item.id}`)}
+            onClick={() => navigate(`/admin/sublocations/edit/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Trash />}
             color="danger"
             onClick={() => {
-              setSelectedLocation(item)
+              setSelectedSubLocation(item)
               setShowDeleteModal(true)
             }}
           />
@@ -128,18 +133,18 @@ const LocationPage = () => {
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1>Locations</h1>
-        <Breadcrumb menu="Master" active="Locations" />
+        <h1>SubLocations</h1>
+        <Breadcrumb menu="Master" active="SubLocations" />
       </div>
 
       <DeleteModal
         open={showDeleteModal}
-        data={selectedLocation}
+        data={selectedSubLocation}
         handleDelete={() => {
-          if (selectedLocation?.id) {
-            handleDelete(selectedLocation.id)
+          if (selectedSubLocation?.id) {
+            handleDelete(selectedSubLocation.id)
             setShowDeleteModal(false)
-            setSelectedLocation(null)
+            setSelectedSubLocation(null)
           }
         }}
         onClose={() => setShowDeleteModal(false)}
@@ -152,14 +157,17 @@ const LocationPage = () => {
         <FormButton
           color="primary"
           icon={<Plus />}
-          onClick={() => navigate("/admin/locations/add")}
+          onClick={() => navigate("/admin/sublocations/add")}
         >
-          Add Location
+          Add SubLocation
         </FormButton>
 
         <div className="d-flex align-items-center gap-2">
-          {filteredLocations && filteredLocations.length > 0 && (
-            <ExcelDownload data={filteredLocations} sheetName="Location" />
+          {filteredSubLocations && filteredSubLocations.length > 0 && (
+            <ExcelDownload
+              data={filteredSubLocations}
+              sheetName="SubLocation"
+            />
           )}
           <Search handleSearch={handleSearch} />
         </div>
@@ -168,7 +176,7 @@ const LocationPage = () => {
       <Table
         columns={columns}
         loading={loading}
-        dataSource={filteredLocations || []}
+        dataSource={filteredSubLocations || []}
         rowKey="id"
         pagination={{
           current: page,
@@ -188,4 +196,4 @@ const LocationPage = () => {
   )
 }
 
-export default LocationPage
+export default SubLocationPage

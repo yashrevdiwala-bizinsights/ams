@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { Switch, Table } from "antd"
+import { Table } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
@@ -12,64 +12,58 @@ import { Search } from "@/modules/components/search"
 import { DeleteModal } from "@/modules/components/delete-modal"
 
 import { useDispatch, useSelector } from "react-redux"
-import { deleteLocation, fetchLocation } from "@/redux/slice/locationSlice"
+import { deleteOS, fetchOS } from "@/redux/slice/osSlice"
 import type { RootState, AppDispatch } from "@/redux/store"
-import { LocationType } from "@/types"
+import { OSType } from "@/types"
 
-const LocationPage = () => {
-  useDocumentTitle("Locations - AMS")
+const OSPage = () => {
+  useDocumentTitle("OS - AMS")
 
   const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()
-  const [filteredLocations, setFilteredLocations] = useState<
-    LocationType[] | null
-  >(null)
+  const [filteredOS, setFilteredOS] = useState<OSType[] | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
-    null
-  )
+  const [selectedOS, setSelectedOS] = useState<OSType | null>(null)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
 
-  const { data, loading, total } = useSelector(
-    (state: RootState) => state.location
-  )
+  const { data, loading, total } = useSelector((state: RootState) => state.os)
 
   useEffect(() => {
-    dispatch(fetchLocation({ page, limit, search: "" }))
+    dispatch(fetchOS({ page, limit, search: "" }))
   }, [dispatch, page, limit])
 
   useEffect(() => {
-    setFilteredLocations(data)
+    setFilteredOS(data)
   }, [data])
 
   const handleSearch = (value: string) => {
     if (value && data) {
-      const filtered = data.filter((x: { location: string }) =>
-        x.location?.toLowerCase().includes(value.toLowerCase())
+      const filtered = data.filter((x: { OS: string }) =>
+        x.OS?.toLowerCase().includes(value.toLowerCase())
       )
-      setFilteredLocations(filtered)
+      setFilteredOS(filtered)
     } else {
-      setFilteredLocations(data)
+      setFilteredOS(data)
     }
   }
 
   const handleDelete = (id: number) => {
-    dispatch(deleteLocation(id))
+    dispatch(deleteOS(id))
       .unwrap()
       .then(() => {
         // Option 1: Just refetch everything to be safe
-        dispatch(fetchLocation({ page, limit, search: "" }))
+        dispatch(fetchOS({ page, limit, search: "" }))
 
         // Option 2: Or manually remove it from local state if you prefer
-        const updated = filteredLocations?.filter((x) => x.id !== id) || []
-        setFilteredLocations(updated)
+        const updated = filteredOS?.filter((x) => x.id !== id) || []
+        setFilteredOS(updated)
       })
       .catch((err) => {
         console.error("Delete failed:", err)
       })
   }
-  const columns: ColumnsType<LocationType> = [
+  const columns: ColumnsType<OSType> = [
     {
       title: "ID",
       dataIndex: "id",
@@ -80,20 +74,9 @@ const LocationPage = () => {
       },
     },
     {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
-    },
-    {
-      title: "Location Code",
-      dataIndex: "locationCode",
-      key: "locationCode",
-    },
-    {
-      title: "Status",
-      dataIndex: "active",
-      key: "active",
-      render: (active: boolean) => <Switch defaultChecked={active} />,
+      title: "OS",
+      dataIndex: "OS",
+      key: "OS",
     },
     {
       title: "Actions",
@@ -104,19 +87,19 @@ const LocationPage = () => {
           <FormButton
             variant="text"
             icon={<Eye />}
-            onClick={() => navigate(`/admin/locations/view/${item.id}`)}
+            onClick={() => navigate(`/admin/os/view/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Pencil />}
-            onClick={() => navigate(`/admin/locations/edit/${item.id}`)}
+            onClick={() => navigate(`/admin/os/edit/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Trash />}
             color="danger"
             onClick={() => {
-              setSelectedLocation(item)
+              setSelectedOS(item)
               setShowDeleteModal(true)
             }}
           />
@@ -128,18 +111,18 @@ const LocationPage = () => {
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1>Locations</h1>
-        <Breadcrumb menu="Master" active="Locations" />
+        <h1>OS</h1>
+        <Breadcrumb menu="Master" active="OS" />
       </div>
 
       <DeleteModal
         open={showDeleteModal}
-        data={selectedLocation}
+        data={selectedOS}
         handleDelete={() => {
-          if (selectedLocation?.id) {
-            handleDelete(selectedLocation.id)
+          if (selectedOS?.id) {
+            handleDelete(selectedOS.id)
             setShowDeleteModal(false)
-            setSelectedLocation(null)
+            setSelectedOS(null)
           }
         }}
         onClose={() => setShowDeleteModal(false)}
@@ -152,14 +135,14 @@ const LocationPage = () => {
         <FormButton
           color="primary"
           icon={<Plus />}
-          onClick={() => navigate("/admin/locations/add")}
+          onClick={() => navigate("/admin/os/add")}
         >
-          Add Location
+          Add OS
         </FormButton>
 
         <div className="d-flex align-items-center gap-2">
-          {filteredLocations && filteredLocations.length > 0 && (
-            <ExcelDownload data={filteredLocations} sheetName="Location" />
+          {filteredOS && filteredOS.length > 0 && (
+            <ExcelDownload data={filteredOS} sheetName="OS" />
           )}
           <Search handleSearch={handleSearch} />
         </div>
@@ -168,7 +151,7 @@ const LocationPage = () => {
       <Table
         columns={columns}
         loading={loading}
-        dataSource={filteredLocations || []}
+        dataSource={filteredOS || []}
         rowKey="id"
         pagination={{
           current: page,
@@ -188,4 +171,4 @@ const LocationPage = () => {
   )
 }
 
-export default LocationPage
+export default OSPage

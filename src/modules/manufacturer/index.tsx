@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { Switch, Table } from "antd"
+import { Table } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { Eye, Pencil, Plus, Trash } from "lucide-react"
 
@@ -12,64 +12,69 @@ import { Search } from "@/modules/components/search"
 import { DeleteModal } from "@/modules/components/delete-modal"
 
 import { useDispatch, useSelector } from "react-redux"
-import { deleteLocation, fetchLocation } from "@/redux/slice/locationSlice"
+import {
+  deleteManufacturer,
+  fetchManufacturer,
+} from "@/redux/slice/manufacturerSlice"
 import type { RootState, AppDispatch } from "@/redux/store"
-import { LocationType } from "@/types"
+import { Manufacturer } from "@/types"
 
-const LocationPage = () => {
-  useDocumentTitle("Locations - AMS")
+const ManufacturerPage = () => {
+  useDocumentTitle("Manufacturer - AMS")
 
   const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()
-  const [filteredLocations, setFilteredLocations] = useState<
-    LocationType[] | null
+  const [filteredManufacturer, setFilteredManufacturer] = useState<
+    Manufacturer[] | null
   >(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
-    null
-  )
+  const [selectedManufacturer, setSelectedManufacturer] =
+    useState<Manufacturer | null>(null)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
 
   const { data, loading, total } = useSelector(
-    (state: RootState) => state.location
+    (state: RootState) => state.manufacturer
   )
 
   useEffect(() => {
-    dispatch(fetchLocation({ page, limit, search: "" }))
+    dispatch(fetchManufacturer({ page, limit, search: "" }))
   }, [dispatch, page, limit])
 
   useEffect(() => {
-    setFilteredLocations(data)
+    setFilteredManufacturer(data)
   }, [data])
 
   const handleSearch = (value: string) => {
     if (value && data) {
-      const filtered = data.filter((x: { location: string }) =>
-        x.location?.toLowerCase().includes(value.toLowerCase())
+      const filtered = data.filter(
+        (x: { manfact: string; subCat1: string }) =>
+          x.manfact?.toLowerCase().includes(value.toLowerCase()) ||
+          x.subCat1?.toLowerCase().includes(value.toLowerCase())
       )
-      setFilteredLocations(filtered)
+      setFilteredManufacturer(filtered)
     } else {
-      setFilteredLocations(data)
+      setFilteredManufacturer(data)
     }
   }
 
   const handleDelete = (id: number) => {
-    dispatch(deleteLocation(id))
+    dispatch(deleteManufacturer(id))
       .unwrap()
       .then(() => {
         // Option 1: Just refetch everything to be safe
-        dispatch(fetchLocation({ page, limit, search: "" }))
+        dispatch(fetchManufacturer({ page, limit, search: "" }))
 
         // Option 2: Or manually remove it from local state if you prefer
-        const updated = filteredLocations?.filter((x) => x.id !== id) || []
-        setFilteredLocations(updated)
+        const updated = filteredManufacturer?.filter((x) => x.id !== id) || []
+        setFilteredManufacturer(updated)
       })
       .catch((err) => {
         console.error("Delete failed:", err)
       })
   }
-  const columns: ColumnsType<LocationType> = [
+
+  const columns: ColumnsType<Manufacturer> = [
     {
       title: "ID",
       dataIndex: "id",
@@ -80,20 +85,19 @@ const LocationPage = () => {
       },
     },
     {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
+      title: "Manufacturer",
+      dataIndex: "manfact",
+      key: "manfact",
     },
     {
-      title: "Location Code",
-      dataIndex: "locationCode",
-      key: "locationCode",
+      title: "MajorCat",
+      dataIndex: "majorCat",
+      key: "majorCat",
     },
     {
-      title: "Status",
-      dataIndex: "active",
-      key: "active",
-      render: (active: boolean) => <Switch defaultChecked={active} />,
+      title: "SubCat1",
+      dataIndex: "subCat1",
+      key: "subCat1",
     },
     {
       title: "Actions",
@@ -104,19 +108,19 @@ const LocationPage = () => {
           <FormButton
             variant="text"
             icon={<Eye />}
-            onClick={() => navigate(`/admin/locations/view/${item.id}`)}
+            onClick={() => navigate(`/admin/manufacturer/view/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Pencil />}
-            onClick={() => navigate(`/admin/locations/edit/${item.id}`)}
+            onClick={() => navigate(`/admin/manufacturer/edit/${item.id}`)}
           />
           <FormButton
             variant="text"
             icon={<Trash />}
             color="danger"
             onClick={() => {
-              setSelectedLocation(item)
+              setSelectedManufacturer(item)
               setShowDeleteModal(true)
             }}
           />
@@ -128,18 +132,18 @@ const LocationPage = () => {
   return (
     <main id="main" className="main">
       <div className="pagetitle">
-        <h1>Locations</h1>
-        <Breadcrumb menu="Master" active="Locations" />
+        <h1>Manufacturer</h1>
+        <Breadcrumb menu="Master" active="Manufacturer" />
       </div>
 
       <DeleteModal
         open={showDeleteModal}
-        data={selectedLocation}
+        data={selectedManufacturer}
         handleDelete={() => {
-          if (selectedLocation?.id) {
-            handleDelete(selectedLocation.id)
+          if (selectedManufacturer?.id) {
+            handleDelete(selectedManufacturer.id)
             setShowDeleteModal(false)
-            setSelectedLocation(null)
+            setSelectedManufacturer(null)
           }
         }}
         onClose={() => setShowDeleteModal(false)}
@@ -152,14 +156,17 @@ const LocationPage = () => {
         <FormButton
           color="primary"
           icon={<Plus />}
-          onClick={() => navigate("/admin/locations/add")}
+          onClick={() => navigate("/admin/manufacturer/add")}
         >
-          Add Location
+          Add Manufacturer
         </FormButton>
 
         <div className="d-flex align-items-center gap-2">
-          {filteredLocations && filteredLocations.length > 0 && (
-            <ExcelDownload data={filteredLocations} sheetName="Location" />
+          {filteredManufacturer && filteredManufacturer.length > 0 && (
+            <ExcelDownload
+              data={filteredManufacturer}
+              sheetName="Manufacturer"
+            />
           )}
           <Search handleSearch={handleSearch} />
         </div>
@@ -168,7 +175,7 @@ const LocationPage = () => {
       <Table
         columns={columns}
         loading={loading}
-        dataSource={filteredLocations || []}
+        dataSource={filteredManufacturer || []}
         rowKey="id"
         pagination={{
           current: page,
@@ -188,4 +195,4 @@ const LocationPage = () => {
   )
 }
 
-export default LocationPage
+export default ManufacturerPage
